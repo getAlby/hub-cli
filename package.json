@@ -1,0 +1,41 @@
+{
+  "name": "@getalby/hub-cli",
+  "description": "CLI for managing Alby Hub - a self-custodial Lightning node",
+  "repository": "https://github.com/getAlby/hub.git",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "build/index.js",
+  "bin": {
+    "hub-cli": "build/index.js"
+  },
+  "files": [
+    "build/**/*"
+  ],
+  "scripts": {
+    "prepack": "yarn build",
+    "build": "tsc && chmod 755 build/index.js",
+    "start": "node build/index.js",
+    "dev": "yarn build && node build/index.js",
+    "test": "yarn build && vitest run",
+    "test:watch": "vitest"
+  },
+  "keywords": [
+    "lightning",
+    "alby",
+    "hub",
+    "ldk",
+    "bitcoin",
+    "cli",
+    "agent"
+  ],
+  "author": "Alby contributors",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "commander": "^13.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.5.0",
+    "vitest": "^3.0.0"
+  }
+}
