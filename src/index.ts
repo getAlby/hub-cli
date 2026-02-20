@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { Command } from "commander";
 
+import { registerSetupCommand } from "./commands/setup.js";
 import { registerUnlockCommand } from "./commands/unlock.js";
 import { registerStartCommand } from "./commands/start.js";
 import { registerInfoCommand } from "./commands/info.js";
@@ -34,6 +35,7 @@ program
   .option("-t, --token <jwt>", "JWT token (or set HUB_TOKEN env)")
   .option("--hub <name>", "Named hub (loads token from ~/.hub-cli/token-<name>.jwt)");
 
+registerSetupCommand(program);
 registerUnlockCommand(program);
 registerStartCommand(program);
 registerInfoCommand(program);
