@@ -6,7 +6,7 @@ import { handleError, output, saveToken } from "../utils.js";
 export function registerStartCommand(program: Command): void {
   program
     .command("start")
-    .description("Start the Lightning node (required after hub restart before it is unlocked)")
+    .description("Start the Lightning node and get a JWT token. Required after setup or hub restart. Use 'unlock' instead if the hub is already running and you only need a fresh token.")
     .requiredOption("-p, --password <string>", "Unlock password")
     .option("--save", "Save returned token to ~/.hub-cli/token.jwt")
     .option("--save-as <name>", "Save returned token to ~/.hub-cli/token-<name>.jwt")
