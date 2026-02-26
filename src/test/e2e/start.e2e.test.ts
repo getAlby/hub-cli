@@ -1,78 +1,102 @@
-import { test, expect, beforeAll, afterAll } from "vitest";
-import { spawn, spawnSync } from "node:child_process";
-import { mkdtempSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
-import { fileURLToPath } from "node:url";
+import { test, expect, beforeEach, afterEach } from "vitest";
 import type { ChildProcess } from "node:child_process";
-
-const E2E_DIR = fileURLToPath(new URL(".", import.meta.url));
-const HUB_BINARY = join(E2E_DIR, "albyhub-Server-Linux-x86_64/bin/albyhub");
+import { TEST_PASSWORD, spawnHub, runCommand, waitForInfo, killHub } from "./helpers";
 
 const HUB_PORT = 18081; // different port from setup.e2e.test.ts (18080)
 const HUB_URL = `http://localhost:${HUB_PORT}`;
-const TEST_PASSWORD = "test-password-e2e";
 
 let hubProcess: ChildProcess;
 let workDir: string;
 
-beforeAll(async () => {
-  workDir = mkdtempSync(join(tmpdir(), "hub-cli-e2e-start-"));
+beforeEach(async () => {
+  ({ hubProcess, workDir } = await spawnHub(HUB_PORT, "hub-cli-e2e-start-"));
 
-  console.log("Hub WORK_DIR:", workDir);
-
-  hubProcess = spawn(HUB_BINARY, [], {
-    env: {
-      ...process.env,
-      WORK_DIR: workDir,
-      PORT: String(HUB_PORT),
-      NETWORK: "regtest",
-      LDK_ESPLORA_SERVER: process.env.POLAR_ESPLORA_URL ?? "http://127.0.0.1:3000",
-      MEMPOOL_API: process.env.POLAR_ESPLORA_URL ?? "http://127.0.0.1:3000",
-    },
-    stdio: "pipe",
-  });
-
-  hubProcess.stdout?.on("data", (d) => process.stdout.write(`[hub] ${d}`));
-  hubProcess.stderr?.on("data", (d) => process.stderr.write(`[hub] ${d}`));
-
-  await waitForHub(HUB_URL);
-
-  // setup is a prerequisite for start
-  const setup = spawnSync(
-    "node",
-    ["build/index.js", "--url", HUB_URL, "setup", "--password", TEST_PASSWORD, "--backend", "LDK"],
-    { encoding: "utf-8", cwd: process.cwd() },
-  );
+  // setup is a prerequisite for all start tests
+  const setup = runCommand([
+    "--url",
+    HUB_URL,
+    "setup",
+    "--password",
+    TEST_PASSWORD,
+    "--backend",
+    "LDK",
+  ]);
   if (setup.status !== 0) throw new Error(`setup failed: ${setup.stderr}`);
 });
 
-afterAll(() => {
-  hubProcess?.kill();
+afterEach(async () => {
+  if (hubProcess) await killHub(hubProcess);
 });
 
-async function waitForHub(url: string, timeoutMs = 20_000): Promise<void> {
-  const deadline = Date.now() + timeoutMs;
-  while (Date.now() < deadline) {
-    try {
-      const res = await fetch(`${url}/api/info`);
-      if (res.ok) return;
-    } catch {
-      // not ready yet
-    }
-    await new Promise((r) => setTimeout(r, 500));
-  }
-  throw new Error(`Hub did not become ready within ${timeoutMs}ms`);
-}
+test("cannot start with wrong unlock password", () => {
+  const result = runCommand([
+    "--url",
+    HUB_URL,
+    "start",
+    "--password",
+    "wrong-password",
+  ]);
+  expect(result.status).toBe(1);
+  const output = JSON.parse(result.stdout);
+  expect(typeof output.error).toBe("string");
+  expect(output.error).toEqual("Invalid password");
+});
 
-test("start returns a JWT token", { timeout: 60_000 }, () => {
-  const result = spawnSync(
-    "node",
-    ["build/index.js", "--url", HUB_URL, "start", "--password", TEST_PASSWORD],
-    { encoding: "utf-8", cwd: process.cwd() },
-  );
+test("start returns a JWT token", { timeout: 60_000 }, async () => {
+  const result = runCommand([
+    "--url",
+    HUB_URL,
+    "start",
+    "--password",
+    TEST_PASSWORD,
+  ]);
   expect(result.status).toBe(0);
   const output = JSON.parse(result.stdout);
   expect(typeof output.token).toBe("string");
   expect(output.token.length).toBeGreaterThan(0);
+  const info = await waitForInfo(HUB_URL, (i) => i.running);
+  expect(info.running).toBe(true);
+});
+
+test("rate limit on start", { timeout: 60_000 }, () => {
+  let result = runCommand([
+    "--url",
+    HUB_URL,
+    "start",
+    "--password",
+    "incorrect_password",
+  ]);
+  expect(result.status).toBe(1);
+  let output = JSON.parse(result.stdout);
+  expect(typeof output.error).toBe("string");
+  expect(output.error).toEqual("Invalid password");
+  result = runCommand([
+    "--url",
+    HUB_URL,
+    "start",
+    "--password",
+    "incorrect_password_2",
+  ]);
+  expect(result.status).toBe(1);
+  output = JSON.parse(result.stdout);
+  expect(typeof output.error).toBe("string");
+  expect(output.error).toEqual("rate limit exceeded");
+});
+
+test("cannot start if already started", { timeout: 60_000 }, async () => {
+  let result = runCommand([
+    "--url",
+    HUB_URL,
+    "start",
+    "--password",
+    TEST_PASSWORD,
+  ]);
+  expect(result.status).toBe(0);
+  await waitForInfo(HUB_URL, (i) => i.running);
+  // avoid rate limit
+  await new Promise((r) => setTimeout(r, 3000));
+  result = runCommand(["--url", HUB_URL, "start", "--password", TEST_PASSWORD]);
+  expect(result.status).toBe(0);
+  const info = await waitForInfo(HUB_URL, (i) => i.startupError.length > 0);
+  expect(info.startupError).toEqual("app already started");
 });
