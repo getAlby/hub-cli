@@ -16,7 +16,8 @@
     "build": "tsc && chmod 755 build/index.js",
     "start": "node build/index.js",
     "dev": "yarn build && node build/index.js",
-    "test": "yarn build && vitest run",
+    "test": "yarn build && vitest run --config vitest.config.ts",
+    "test:e2e": "yarn build && vitest run --config vitest.config.e2e.ts",
     "test:watch": "vitest"
   },
   "keywords": [
