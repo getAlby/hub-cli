@@ -41,4 +41,48 @@ jobs:
           mkdir -p src/test/e2e/albyhub-Server-Linux-x86_64
           tar -xjf src/test/e2e/albyhub-Server-Linux-x86_64.tar.bz2 -C src/test/e2e/albyhub-Server-Linux-x86_64
 
+      - name: Cache Bitcoin Core binary
+        uses: actions/cache@v4
+        with:
+          path: bitcoin-28.1
+          key: bitcoind-28.1-linux-x86_64
+
+      - name: Install and start bitcoind (regtest)
+        run: |
+          if [ ! -f bitcoin-28.1/bin/bitcoind ]; then
+            curl -sL https://bitcoincore.org/bin/bitcoin-core-28.1/bitcoin-28.1-x86_64-linux-gnu.tar.gz \
+              -o bitcoin-28.1.tar.gz
+            tar -xzf bitcoin-28.1.tar.gz
+            rm bitcoin-28.1.tar.gz
+          fi
+
+          mkdir -p /tmp/bitcoin-regtest
+          printf '%s\n' \
+            'regtest=1' \
+            'server=1' \
+            'daemon=1' \
+            'rpcuser=polaruser' \
+            'rpcpassword=polarpass' \
+            'rpcbind=127.0.0.1' \
+            'rpcallowip=127.0.0.1' \
+            'disablewallet=1' \
+            > /tmp/bitcoin-regtest/bitcoin.conf
+
+          bitcoin-28.1/bin/bitcoind -datadir=/tmp/bitcoin-regtest
+
+          for i in $(seq 1 30); do
+            if bitcoin-28.1/bin/bitcoin-cli \
+                -regtest \
+                -rpcconnect=127.0.0.1 \
+                -rpcport=18443 \
+                -rpcuser=polaruser \
+                -rpcpassword=polarpass \
+                getblockchaininfo > /dev/null 2>&1; then
+              echo "bitcoind ready after ${i}s"
+              break
+            fi
+            echo "Waiting for bitcoind... ($i/30)"
+            sleep 1
+          done
+
       - run: yarn test:e2e
