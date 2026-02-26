@@ -61,11 +61,13 @@ jobs:
             'regtest=1' \
             'server=1' \
             'daemon=1' \
+            'disablewallet=1' \
+            '' \
+            '[regtest]' \
             'rpcuser=polaruser' \
             'rpcpassword=polarpass' \
             'rpcbind=127.0.0.1' \
             'rpcallowip=127.0.0.1' \
-            'disablewallet=1' \
             > /tmp/bitcoin-regtest/bitcoin.conf
 
           bitcoin-28.1/bin/bitcoind -datadir=/tmp/bitcoin-regtest
