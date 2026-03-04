@@ -82,10 +82,10 @@ LDK_ESPLORA_SERVER=https://mutinynet.com/api \
 # Set up, start the node, and save the token
 npx @getalby/hub-cli setup --password YOUR_PASSWORD --backend LDK
 npx @getalby/hub-cli start --password YOUR_PASSWORD --save
-npx @getalby/hub-cli info
+npx @getalby/hub-cli get-info
 
 # Get initial test funds from https://faucet.mutinynet.com (requires human + GitHub login)
-npx @getalby/hub-cli wallet-address
+npx @getalby/hub-cli get-onchain-address
 ```
 
 ## Commands
@@ -118,13 +118,13 @@ npx @getalby/hub-cli unlock --password YOUR_PASSWORD --permission readonly --sav
 
 ```bash
 # Hub status, version, backend type
-npx @getalby/hub-cli info
+npx @getalby/hub-cli get-info
 
 # Lightning node readiness
-npx @getalby/hub-cli node-status
+npx @getalby/hub-cli get-node-status
 
 # Health check with active alarms
-npx @getalby/hub-cli health
+npx @getalby/hub-cli get-health
 ```
 
 ### Balances & Wallet
@@ -134,38 +134,63 @@ npx @getalby/hub-cli health
 npx @getalby/hub-cli balances
 
 # Get an on-chain deposit address
-npx @getalby/hub-cli wallet-address
+npx @getalby/hub-cli get-onchain-address
 ```
 
 ### Channels & Peers
 
 ```bash
 # List Lightning channels
-npx @getalby/hub-cli channels
+npx @getalby/hub-cli list-channels
 
 # List LSP providers with fees and channel size limits
-npx @getalby/hub-cli channel-suggestions
+npx @getalby/hub-cli get-channel-suggestions
 
 # Get Alby LSP offer (requires linked Alby account)
-npx @getalby/hub-cli channel-offer
+npx @getalby/hub-cli get-channel-offer
+
+# Get your node's connection info (pubkey, address, port)
+npx @getalby/hub-cli get-node-connection-info
 
 # List connected peers
-npx @getalby/hub-cli peers
+npx @getalby/hub-cli list-peers
+
+# Connect to a peer
+npx @getalby/hub-cli connect-peer --pubkey <pubkey> --address <host> --port <port>
+
+# Open an outbound channel to a peer (requires on-chain funds)
+npx @getalby/hub-cli open-channel --pubkey <pubkey> --amount-sats 500000
+
+# Open a public channel
+npx @getalby/hub-cli open-channel --pubkey <pubkey> --amount-sats 500000 --public
+
+# Close a channel (cooperative)
+npx @getalby/hub-cli close-channel --peer-id <pubkey> --channel-id <id>
+
+# Force-close a channel
+npx @getalby/hub-cli close-channel --peer-id <pubkey> --channel-id <id> --force
 ```
 
 ### Opening a Channel via LSP
 
 ```bash
-# 1. Pick an LSP from channel-suggestions
-npx @getalby/hub-cli channel-suggestions
+# 1. Pick an LSP from get-channel-suggestions
+npx @getalby/hub-cli get-channel-suggestions
 
 # 2. Request a Lightning invoice from the LSP
-npx @getalby/hub-cli lsp-order --amount 1000000 --lsp-type <type> --lsp-identifier <identifier>
+npx @getalby/hub-cli request-lsp-order --amount 1000000 --lsp-type <type> --lsp-identifier <identifier>
 
 # 3. Pay the invoice (mainnet — if you have a funded wallet)
 npx @getalby/hub-cli pay-invoice <invoice>
 
 # On Mutinynet, a human must pay the invoice via https://faucet.mutinynet.com
+```
+
+### Node Management
+
+```bash
+# Stop the Lightning node (hub HTTP server keeps running)
+npx @getalby/hub-cli stop
 ```
 
 ### Payments
@@ -185,10 +210,10 @@ npx @getalby/hub-cli make-invoice --amount 1000 --description "test"
 
 ```bash
 # List recent payments
-npx @getalby/hub-cli transactions
+npx @getalby/hub-cli list-transactions
 
 # With pagination
-npx @getalby/hub-cli transactions --limit 50 --offset 0
+npx @getalby/hub-cli list-transactions --limit 50 --offset 0
 
 # Look up a specific payment by hash
 npx @getalby/hub-cli lookup-transaction <paymentHash>
@@ -227,26 +252,36 @@ npx @getalby/hub-cli create-app --name "Isolated App" --isolated --unlock-passwo
 
 | Command | Description | Required Options |
 | --- | --- | --- |
-| `info` | Hub status, version, backend type | — |
-| `node-status` | Lightning node readiness | — |
-| `health` | Health check and active alarms | — |
+| `get-info` | Hub status, version, backend type | — |
+| `get-node-status` | Lightning node readiness | — |
+| `get-health` | Health check and active alarms | — |
 
 ### Balances & Wallet
 
 | Command | Description | Required Options |
 | --- | --- | --- |
 | `balances` | Lightning + on-chain balances | — |
-| `wallet-address` | On-chain deposit address | — |
+| `get-onchain-address` | On-chain deposit address | — |
 
 ### Channels & Peers
 
 | Command | Description | Required Options |
 | --- | --- | --- |
-| `channels` | List Lightning channels | — |
-| `channel-suggestions` | List LSP providers with fees | — |
-| `channel-offer` | Get Alby LSP offer | — |
-| `peers` | List connected peers | — |
-| `lsp-order` | Request LSP channel invoice | `--amount`, `--lsp-type`, `--lsp-identifier` |
+| `list-channels` | List Lightning channels | — |
+| `get-channel-suggestions` | List LSP providers with fees | — |
+| `get-channel-offer` | Get Alby LSP offer | — |
+| `get-node-connection-info` | Get node pubkey, address, port | — |
+| `list-peers` | List connected peers | — |
+| `connect-peer` | Connect to a Lightning peer | `--pubkey`, `--address`, `--port` |
+| `open-channel` | Open an outbound channel to a peer | `--pubkey`, `--amount-sats` |
+| `close-channel` | Close a lightning channel (cooperative or force) | `--peer-id`, `--channel-id` |
+| `request-lsp-order` | Request LSP channel invoice | `--amount`, `--lsp-type`, `--lsp-identifier` |
+
+### Node Management
+
+| Command | Description | Required Options |
+| --- | --- | --- |
+| `stop` | Stop the Lightning node (HTTP server keeps running) | — |
 
 ### Payments
 
@@ -259,7 +294,7 @@ npx @getalby/hub-cli create-app --name "Isolated App" --isolated --unlock-passwo
 
 | Command | Description | Required Options |
 | --- | --- | --- |
-| `transactions` | List payment history | — |
+| `list-transactions` | List payment history | — |
 | `lookup-transaction` | Look up a payment by hash | `<paymentHash>` (argument) |
 
 ### NWC Apps

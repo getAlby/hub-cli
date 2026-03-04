@@ -4,7 +4,7 @@ import { getClient, handleError, output } from "../utils.js";
 
 export function registerTransactionsCommand(program: Command): void {
   program
-    .command("transactions")
+    .command("list-transactions")
     .description("List payment history")
     .option("--limit <number>", "Maximum number of transactions to return", "20")
     .option("--offset <number>", "Pagination offset", "0")

@@ -188,6 +188,12 @@ export interface NodeStatus {
   internalNodeStatus: unknown;
 }
 
+export interface NodeConnectionInfo {
+  pubkey: string;
+  address: string;
+  port: number;
+}
+
 export interface HealthAlarm {
   kind: string;
   rawDetails?: unknown;

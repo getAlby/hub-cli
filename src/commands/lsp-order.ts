@@ -4,7 +4,7 @@ import { getClient, handleError, output } from "../utils.js";
 
 export function registerLspOrderCommand(program: Command): void {
   program
-    .command("lsp-order")
+    .command("request-lsp-order")
     .description(
       "Request a Lightning invoice from an LSP to open a channel. Pay the returned invoice to open the channel.",
     )
@@ -31,12 +31,15 @@ export function registerLspOrderCommand(program: Command): void {
       }) => {
         await handleError(async () => {
           const client = getClient(program);
-          const result = await client.post<LSPOrderResponse>("/api/lsp-orders", {
-            amount: opts.amount,
-            lspType: opts.lspType,
-            lspIdentifier: opts.lspIdentifier,
-            public: opts.public,
-          });
+          const result = await client.post<LSPOrderResponse>(
+            "/api/lsp-orders",
+            {
+              amount: opts.amount,
+              lspType: opts.lspType,
+              lspIdentifier: opts.lspIdentifier,
+              public: opts.public,
+            },
+          );
           output(result);
         });
       },

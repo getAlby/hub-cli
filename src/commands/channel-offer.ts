@@ -4,7 +4,7 @@ import { getClient, handleError, output } from "../utils.js";
 
 export function registerChannelOfferCommand(program: Command): void {
   program
-    .command("channel-offer")
+    .command("get-channel-offer")
     .description(
       "Get Alby LSP channel offer with recommended size and fee (requires linked Alby account)",
     )

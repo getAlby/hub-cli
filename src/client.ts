@@ -31,6 +31,14 @@ export class HubClient {
     return this.handleResponse<T>(res);
   }
 
+  async delete<T>(path: string): Promise<T> {
+    const res = await fetch(`${this.baseUrl}${path}`, {
+      method: "DELETE",
+      headers: this.headers(),
+    });
+    return this.handleResponse<T>(res);
+  }
+
   private async handleResponse<T>(res: Response): Promise<T> {
     const text = await res.text();
     if (!res.ok) {

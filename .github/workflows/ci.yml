@@ -1,0 +1,98 @@
+name: CI
+
+on:
+  pull_request:
+
+jobs:
+  unit-tests:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "yarn"
+          cache-dependency-path: yarn.lock
+
+      - run: yarn install --frozen-lockfile
+
+      - run: yarn test
+
+  e2e-tests:
+    name: E2E tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "yarn"
+          cache-dependency-path: yarn.lock
+
+      - run: yarn install --frozen-lockfile
+
+      - name: Download Alby Hub binary
+        run: |
+          curl -sL https://github.com/getAlby/hub/releases/download/v1.21.4/albyhub-Server-Linux-x86_64.tar.bz2 \
+            -o src/test/e2e/albyhub-Server-Linux-x86_64.tar.bz2
+          mkdir -p src/test/e2e/albyhub-Server-Linux-x86_64
+          tar -xjf src/test/e2e/albyhub-Server-Linux-x86_64.tar.bz2 -C src/test/e2e/albyhub-Server-Linux-x86_64
+
+      - name: Cache Bitcoin Core binary
+        uses: actions/cache@v4
+        with:
+          path: bitcoin-28.1
+          key: bitcoind-28.1-linux-x86_64
+
+      - name: Install and start bitcoind (regtest)
+        run: |
+          if [ ! -f bitcoin-28.1/bin/bitcoind ]; then
+            curl -sL https://bitcoincore.org/bin/bitcoin-core-28.1/bitcoin-28.1-x86_64-linux-gnu.tar.gz \
+              -o bitcoin-28.1.tar.gz
+            tar -xzf bitcoin-28.1.tar.gz
+            rm bitcoin-28.1.tar.gz
+          fi
+
+          mkdir -p /tmp/bitcoin-regtest
+          printf '%s\n' \
+            'regtest=1' \
+            'server=1' \
+            'daemon=1' \
+            '' \
+            '[regtest]' \
+            'rpcuser=polaruser' \
+            'rpcpassword=polarpass' \
+            'rpcbind=127.0.0.1' \
+            'rpcallowip=127.0.0.1' \
+            'fallbackfee=0.0002' \
+            > /tmp/bitcoin-regtest/bitcoin.conf
+
+          bitcoin-28.1/bin/bitcoind -datadir=/tmp/bitcoin-regtest
+
+          for i in $(seq 1 30); do
+            if bitcoin-28.1/bin/bitcoin-cli \
+                -regtest \
+                -rpcconnect=127.0.0.1 \
+                -rpcport=18443 \
+                -rpcuser=polaruser \
+                -rpcpassword=polarpass \
+                getblockchaininfo > /dev/null 2>&1; then
+              echo "bitcoind ready after ${i}s"
+              break
+            fi
+            echo "Waiting for bitcoind... ($i/30)"
+            sleep 1
+          done
+
+          bitcoin-28.1/bin/bitcoin-cli \
+            -regtest \
+            -rpcconnect=127.0.0.1 \
+            -rpcport=18443 \
+            -rpcuser=polaruser \
+            -rpcpassword=polarpass \
+            createwallet "default"
+
+      - run: yarn test:e2e

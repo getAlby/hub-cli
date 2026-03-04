@@ -4,7 +4,7 @@ import { getClient, handleError, output } from "../utils.js";
 
 export function registerChannelSuggestionsCommand(program: Command): void {
   program
-    .command("channel-suggestions")
+    .command("get-channel-suggestions")
     .description(
       "List available LSP providers with fees and channel size limits",
     )
