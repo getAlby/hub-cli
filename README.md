@@ -163,6 +163,12 @@ npx @getalby/hub-cli open-channel --pubkey <pubkey> --amount-sats 500000
 
 # Open a public channel
 npx @getalby/hub-cli open-channel --pubkey <pubkey> --amount-sats 500000 --public
+
+# Close a channel (cooperative)
+npx @getalby/hub-cli close-channel --peer-id <pubkey> --channel-id <id>
+
+# Force-close a channel
+npx @getalby/hub-cli close-channel --peer-id <pubkey> --channel-id <id> --force
 ```
 
 ### Opening a Channel via LSP
@@ -268,6 +274,7 @@ npx @getalby/hub-cli create-app --name "Isolated App" --isolated --unlock-passwo
 | `list-peers` | List connected peers | — |
 | `connect-peer` | Connect to a Lightning peer | `--pubkey`, `--address`, `--port` |
 | `open-channel` | Open an outbound channel to a peer | `--pubkey`, `--amount-sats` |
+| `close-channel` | Close a lightning channel (cooperative or force) | `--peer-id`, `--channel-id` |
 | `request-lsp-order` | Request LSP channel invoice | `--amount`, `--lsp-type`, `--lsp-identifier` |
 
 ### Node Management

@@ -24,6 +24,7 @@ import { registerWalletAddressCommand } from "./commands/wallet-address.js";
 import { registerGetNodeConnectionInfoCommand } from "./commands/get-node-connection-info.js";
 import { registerConnectPeerCommand } from "./commands/connect-peer.js";
 import { registerOpenChannelCommand } from "./commands/open-channel.js";
+import { registerCloseChannelCommand } from "./commands/close-channel.js";
 
 const program = new Command();
 
@@ -62,5 +63,6 @@ registerWalletAddressCommand(program);
 registerGetNodeConnectionInfoCommand(program);
 registerConnectPeerCommand(program);
 registerOpenChannelCommand(program);
+registerCloseChannelCommand(program);
 
 program.parse();

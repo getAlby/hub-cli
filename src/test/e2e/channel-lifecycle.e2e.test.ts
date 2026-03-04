@@ -299,3 +299,180 @@ test("sends sats from hub A to hub B", { timeout: 120_000 }, async () => {
   };
   expect(hubBBalancesAfterData.lightning.totalSpendable).toBeGreaterThan(0);
 });
+
+test("sends sats from hub B back to hub A", { timeout: 120_000 }, async () => {
+  const AMOUNT_SATS = 5_000;
+
+  // Hub A creates an invoice
+  const invoiceResult = runCommand([
+    "--url",
+    HUB_A_URL,
+    "--token",
+    tokenA,
+    "make-invoice",
+    "--amount",
+    String(AMOUNT_SATS),
+    "--description",
+    "e2e test reverse payment",
+  ]);
+  expect(invoiceResult.status).toBe(0);
+  const invoiceData = JSON.parse(invoiceResult.stdout) as { invoice: string };
+  expect(typeof invoiceData.invoice).toBe("string");
+
+  // Record Hub A's balance before payment
+  const hubABalancesBeforeResult = runCommand([
+    "--url",
+    HUB_A_URL,
+    "--token",
+    tokenA,
+    "balances",
+  ]);
+  expect(hubABalancesBeforeResult.status).toBe(0);
+  const hubABalancesBeforeData = JSON.parse(
+    hubABalancesBeforeResult.stdout,
+  ) as {
+    lightning: { totalSpendable: number };
+  };
+
+  // Record Hub B's balance before payment
+  const hubBBalancesBeforeResult = runCommand([
+    "--url",
+    HUB_B_URL,
+    "--token",
+    tokenB,
+    "balances",
+  ]);
+  expect(hubBBalancesBeforeResult.status).toBe(0);
+  const hubBBalancesBeforeData = JSON.parse(
+    hubBBalancesBeforeResult.stdout,
+  ) as {
+    lightning: { totalSpendable: number };
+  };
+  const hubBSpendableBefore = hubBBalancesBeforeData.lightning.totalSpendable;
+  expect(hubBSpendableBefore).toBeGreaterThan(0);
+
+  // Hub B pays the invoice
+  const payResult = runCommand([
+    "--url",
+    HUB_B_URL,
+    "--token",
+    tokenB,
+    "pay-invoice",
+    invoiceData.invoice,
+  ]);
+  expect(payResult.status).toBe(0);
+
+  // Verify Hub B's balance decreased
+  const hubBBalancesAfterResult = runCommand([
+    "--url",
+    HUB_B_URL,
+    "--token",
+    tokenB,
+    "balances",
+  ]);
+  expect(hubBBalancesAfterResult.status).toBe(0);
+  const hubBBalancesAfterData = JSON.parse(hubBBalancesAfterResult.stdout) as {
+    lightning: { totalSpendable: number };
+  };
+  expect(hubBBalancesAfterData.lightning.totalSpendable).toBeLessThan(
+    hubBSpendableBefore,
+  );
+
+  // Wait for Hub A's channel localBalance to reflect receipt
+  await waitForChannels(
+    HUB_A_URL,
+    tokenA,
+    (chs) =>
+      chs.some(
+        (c) => c.remotePubkey === hubBConnInfo.pubkey && c.localBalance > 0,
+      ),
+    60_000,
+  );
+
+  // Verify Hub A's lightning balance increased
+  const hubABalancesAfterResult = runCommand([
+    "--url",
+    HUB_A_URL,
+    "--token",
+    tokenA,
+    "balances",
+  ]);
+  expect(hubABalancesAfterResult.status).toBe(0);
+  const hubABalancesAfterData = JSON.parse(hubABalancesAfterResult.stdout) as {
+    lightning: { totalSpendable: number };
+  };
+  expect(hubABalancesAfterData.lightning.totalSpendable).toBeGreaterThan(
+    hubABalancesBeforeData.lightning.totalSpendable,
+  );
+});
+
+test(
+  "closes channel and returns funds to hub A on-chain balance",
+  { timeout: 180_000 },
+  async () => {
+    // Get Hub A's current channels to find the channel with Hub B
+    const channelsResult = runCommand([
+      "--url",
+      HUB_A_URL,
+      "--token",
+      tokenA,
+      "list-channels",
+    ]);
+    expect(channelsResult.status).toBe(0);
+    const channels = JSON.parse(channelsResult.stdout) as {
+      id: string;
+      remotePubkey: string;
+    }[];
+    const channel = channels.find(
+      (c) => c.remotePubkey === hubBConnInfo.pubkey,
+    );
+    expect(channel).toBeDefined();
+    const channelId = channel!.id;
+
+    // Get Hub A's current on-chain balance
+    const balancesBeforeResult = runCommand([
+      "--url",
+      HUB_A_URL,
+      "--token",
+      tokenA,
+      "balances",
+    ]);
+    expect(balancesBeforeResult.status).toBe(0);
+    const balancesBeforeData = JSON.parse(balancesBeforeResult.stdout) as {
+      onchain: { spendable: number };
+    };
+    const onchainBefore = balancesBeforeData.onchain.spendable;
+
+    // Close the channel
+    const closeResult = runCommand([
+      "--url",
+      HUB_A_URL,
+      "--token",
+      tokenA,
+      "close-channel",
+      "--peer-id",
+      hubBConnInfo.pubkey,
+      "--channel-id",
+      channelId,
+    ]);
+    expect(closeResult.status).toBe(0);
+
+    // Mine blocks to confirm cooperative close
+    await bitcoinRpc("generatetoaddress", [6, miningAddr]);
+
+    // Wait for channel to disappear or become inactive
+    await waitForChannels(HUB_A_URL, tokenA, (chs) => !chs.length, 120_000);
+
+    // Mine more blocks to ensure on-chain funds are confirmed
+    await bitcoinRpc("generatetoaddress", [6, miningAddr]);
+
+    // Wait for Hub A's on-chain spendable balance to exceed its pre-close value
+    const balancesAfter = await waitForBalances(
+      HUB_A_URL,
+      tokenA,
+      (b) => b.onchain.spendable > onchainBefore,
+      120_000,
+    );
+    expect(balancesAfter.onchain.spendable).toBeGreaterThan(onchainBefore);
+  },
+);
