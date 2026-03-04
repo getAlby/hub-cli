@@ -61,7 +61,6 @@ jobs:
             'regtest=1' \
             'server=1' \
             'daemon=1' \
-            'disablewallet=1' \
             '' \
             '[regtest]' \
             'rpcuser=polaruser' \
@@ -86,5 +85,13 @@ jobs:
             echo "Waiting for bitcoind... ($i/30)"
             sleep 1
           done
+
+          bitcoin-28.1/bin/bitcoin-cli \
+            -regtest \
+            -rpcconnect=127.0.0.1 \
+            -rpcport=18443 \
+            -rpcuser=polaruser \
+            -rpcpassword=polarpass \
+            createwallet "default"
 
       - run: yarn test:e2e

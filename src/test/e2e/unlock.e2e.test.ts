@@ -97,6 +97,9 @@ test("rate limit on unlock", { timeout: 60_000 }, async () => {
 
   await waitForInfo(HUB_URL, (i) => i.running);
 
+  // avoid rate limit
+  await new Promise((resolve) => setTimeout(resolve, 3000));
+
   let result = runCommand([
     "--url",
     HUB_URL,
