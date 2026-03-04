@@ -4,7 +4,7 @@ import { getClient, handleError, output } from "../utils.js";
 
 export function registerNodeStatusCommand(program: Command): void {
   program
-    .command("node-status")
+    .command("get-node-status")
     .description("Get Lightning node readiness status")
     .action(async () => {
       await handleError(async () => {

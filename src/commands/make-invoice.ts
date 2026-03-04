@@ -12,7 +12,7 @@ export function registerMakeInvoiceCommand(program: Command): void {
       await handleError(async () => {
         const client = getClient(program);
         const result = await client.post<Transaction>("/api/invoices", {
-          amount: opts.amount,
+          amount: opts.amount * 1000,
           description: opts.description,
         });
         output(result);

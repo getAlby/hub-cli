@@ -4,7 +4,7 @@ import { getClient, handleError, output } from "../utils.js";
 
 export function registerInfoCommand(program: Command): void {
   program
-    .command("info")
+    .command("get-info")
     .description("Get hub status, version, and configuration")
     .action(async () => {
       await handleError(async () => {

@@ -4,6 +4,7 @@ import { Command } from "commander";
 import { registerSetupCommand } from "./commands/setup.js";
 import { registerUnlockCommand } from "./commands/unlock.js";
 import { registerStartCommand } from "./commands/start.js";
+import { registerStopCommand } from "./commands/stop.js";
 import { registerInfoCommand } from "./commands/info.js";
 import { registerBalancesCommand } from "./commands/balances.js";
 import { registerChannelsCommand } from "./commands/channels.js";
@@ -20,6 +21,9 @@ import { registerPeersCommand } from "./commands/peers.js";
 import { registerNodeStatusCommand } from "./commands/node-status.js";
 import { registerHealthCommand } from "./commands/health.js";
 import { registerWalletAddressCommand } from "./commands/wallet-address.js";
+import { registerGetNodeConnectionInfoCommand } from "./commands/get-node-connection-info.js";
+import { registerConnectPeerCommand } from "./commands/connect-peer.js";
+import { registerOpenChannelCommand } from "./commands/open-channel.js";
 
 const program = new Command();
 
@@ -38,6 +42,7 @@ program
 registerSetupCommand(program);
 registerUnlockCommand(program);
 registerStartCommand(program);
+registerStopCommand(program);
 registerInfoCommand(program);
 registerBalancesCommand(program);
 registerChannelsCommand(program);
@@ -54,5 +59,8 @@ registerPeersCommand(program);
 registerNodeStatusCommand(program);
 registerHealthCommand(program);
 registerWalletAddressCommand(program);
+registerGetNodeConnectionInfoCommand(program);
+registerConnectPeerCommand(program);
+registerOpenChannelCommand(program);
 
 program.parse();

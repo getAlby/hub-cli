@@ -4,7 +4,7 @@ import { getClient, handleError, output } from "../utils.js";
 
 export function registerPeersCommand(program: Command): void {
   program
-    .command("peers")
+    .command("list-peers")
     .description("List connected Lightning peers")
     .action(async () => {
       await handleError(async () => {
