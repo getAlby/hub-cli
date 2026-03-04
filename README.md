@@ -62,12 +62,12 @@ npx @getalby/hub-cli balances --hub production
 
 **Token storage locations:**
 
-| Location | Used when |
-| --- | --- |
-| `~/.hub-cli/token.jwt` | `--save` flag or default |
+| Location                      | Used when                            |
+| ----------------------------- | ------------------------------------ |
+| `~/.hub-cli/token.jwt`        | `--save` flag or default             |
 | `~/.hub-cli/token-<name>.jwt` | `--save-as <name>` or `--hub <name>` |
-| `HUB_TOKEN` env var | Always checked before file |
-| `-t, --token <jwt>` | Highest priority |
+| `HUB_TOKEN` env var           | Always checked before file           |
+| `-t, --token <jwt>`           | Highest priority                     |
 
 ## Testing with Mutinynet
 
@@ -146,8 +146,8 @@ npx @getalby/hub-cli list-channels
 # List LSP providers with fees and channel size limits
 npx @getalby/hub-cli get-channel-suggestions
 
-# Get Alby LSP offer (requires linked Alby account)
-npx @getalby/hub-cli get-channel-offer
+# Request Alby LSP offer (requires linked Alby account)
+npx @getalby/hub-cli request-alby-lsp-channel-offer
 
 # Get your node's connection info (pubkey, address, port)
 npx @getalby/hub-cli get-node-connection-info
@@ -242,68 +242,93 @@ npx @getalby/hub-cli create-app --name "Isolated App" --isolated --unlock-passwo
 
 ### Setup & Auth
 
-| Command | Description | Required Options |
-| --- | --- | --- |
-| `setup` | Initialize hub for the first time (one-time) | `--password` |
-| `start` | Start the node after setup or restart; returns a JWT token | `--password` |
-| `unlock` | Get a JWT token for an already-running hub (no restart) | `--password` |
+| Command  | Description                                                | Required Options |
+| -------- | ---------------------------------------------------------- | ---------------- |
+| `setup`  | Initialize hub for the first time (one-time)               | `--password`     |
+| `start`  | Start the node after setup or restart; returns a JWT token | `--password`     |
+| `unlock` | Get a JWT token for an already-running hub (no restart)    | `--password`     |
 
 ### Info & Status
 
-| Command | Description | Required Options |
-| --- | --- | --- |
-| `get-info` | Hub status, version, backend type | — |
-| `get-node-status` | Lightning node readiness | — |
-| `get-health` | Health check and active alarms | — |
+| Command           | Description                       | Required Options |
+| ----------------- | --------------------------------- | ---------------- |
+| `get-info`        | Hub status, version, backend type | —                |
+| `get-node-status` | Lightning node readiness          | —                |
+| `get-health`      | Health check and active alarms    | —                |
 
 ### Balances & Wallet
 
-| Command | Description | Required Options |
-| --- | --- | --- |
-| `balances` | Lightning + on-chain balances | — |
-| `get-onchain-address` | On-chain deposit address | — |
+| Command               | Description                   | Required Options |
+| --------------------- | ----------------------------- | ---------------- |
+| `balances`            | Lightning + on-chain balances | —                |
+| `get-onchain-address` | On-chain deposit address      | —                |
 
 ### Channels & Peers
 
-| Command | Description | Required Options |
-| --- | --- | --- |
-| `list-channels` | List Lightning channels | — |
-| `get-channel-suggestions` | List LSP providers with fees | — |
-| `get-channel-offer` | Get Alby LSP offer | — |
-| `get-node-connection-info` | Get node pubkey, address, port | — |
-| `list-peers` | List connected peers | — |
-| `connect-peer` | Connect to a Lightning peer | `--pubkey`, `--address`, `--port` |
-| `open-channel` | Open an outbound channel to a peer | `--pubkey`, `--amount-sats` |
-| `close-channel` | Close a lightning channel (cooperative or force) | `--peer-id`, `--channel-id` |
-| `request-lsp-order` | Request LSP channel invoice | `--amount`, `--lsp-type`, `--lsp-identifier` |
+| Command                          | Description                                      | Required Options                             |
+| -------------------------------- | ------------------------------------------------ | -------------------------------------------- |
+| `list-channels`                  | List Lightning channels                          | —                                            |
+| `get-channel-suggestions`        | List LSP providers with fees                     | —                                            |
+| `request-alby-lsp-channel-offer` | Request Alby LSP offer                           | —                                            |
+| `get-node-connection-info`       | Get node pubkey, address, port                   | —                                            |
+| `list-peers`                     | List connected peers                             | —                                            |
+| `connect-peer`                   | Connect to a Lightning peer                      | `--pubkey`, `--address`, `--port`            |
+| `open-channel`                   | Open an outbound channel to a peer               | `--pubkey`, `--amount-sats`                  |
+| `close-channel`                  | Close a lightning channel (cooperative or force) | `--peer-id`, `--channel-id`                  |
+| `request-lsp-order`              | Request LSP channel invoice                      | `--amount`, `--lsp-type`, `--lsp-identifier` |
 
 ### Node Management
 
-| Command | Description | Required Options |
-| --- | --- | --- |
-| `stop` | Stop the Lightning node (HTTP server keeps running) | — |
+| Command | Description                                         | Required Options |
+| ------- | --------------------------------------------------- | ---------------- |
+| `stop`  | Stop the Lightning node (HTTP server keeps running) | —                |
 
 ### Payments
 
-| Command | Description | Required Options |
-| --- | --- | --- |
-| `pay-invoice` | Pay a BOLT11 invoice | `<invoice>` (argument) |
-| `make-invoice` | Create a BOLT11 invoice | `--amount` |
+| Command        | Description             | Required Options       |
+| -------------- | ----------------------- | ---------------------- |
+| `pay-invoice`  | Pay a BOLT11 invoice    | `<invoice>` (argument) |
+| `make-invoice` | Create a BOLT11 invoice | `--amount`             |
 
 ### Transactions
 
-| Command | Description | Required Options |
-| --- | --- | --- |
-| `list-transactions` | List payment history | — |
+| Command              | Description               | Required Options           |
+| -------------------- | ------------------------- | -------------------------- |
+| `list-transactions`  | List payment history      | —                          |
 | `lookup-transaction` | Look up a payment by hash | `<paymentHash>` (argument) |
 
 ### NWC Apps
 
-| Command | Description | Required Options |
-| --- | --- | --- |
-| `apps` | List NWC app connections | — |
-| `create-app` | Create a new NWC connection | `--name` |
+| Command      | Description                 | Required Options |
+| ------------ | --------------------------- | ---------------- |
+| `apps`       | List NWC app connections    | —                |
+| `create-app` | Create a new NWC connection | `--name`         |
 
 ## Output
 
 All commands output JSON to stdout. Errors are written to stderr as JSON with a `message` field.
+
+## Development
+
+`yarn install`
+
+`yarn dev`
+
+`yarn test`
+
+### E2E Testing
+
+End-to-end tests spawn a real Alby Hub binary and exercise the CLI against it. Full setup instructions are in [`src/test/e2e/README.md`](src/test/e2e/README.md).
+
+**Quick start:**
+
+1. Download the Linux Ubuntu 24.04 Alby Hub binary from [GitHub releases](https://github.com/getAlby/hub/releases) and extract it to `src/test/e2e/albyhub-Server-Linux-x86_64/`
+2. For regtest channel tests: install [Polar](https://lightningpolar.com/) and start a network with a Bitcoin Core node
+3. For Mutinynet LSP tests: copy `src/test/e2e/.env.example` → `src/test/e2e/.env` and fill in `MUTINYNET_NWC_URL` (you need a Mutinynet hub running with sufficient liquidity, ideally a direct channel directly to Megalith Mutinynet LSP)
+
+```bash
+cd hub-cli
+yarn test:e2e
+```
+
+Mutinynet tests are skipped automatically when `MUTINYNET_NWC_URL` is not set.

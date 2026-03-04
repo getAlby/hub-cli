@@ -4,9 +4,9 @@ import { getClient, handleError, output } from "../utils.js";
 
 export function registerChannelOfferCommand(program: Command): void {
   program
-    .command("get-channel-offer")
+    .command("request-alby-lsp-channel-offer")
     .description(
-      "Get Alby LSP channel offer with recommended size and fee (requires linked Alby account)",
+      "Request Alby LSP channel offer with recommended size and fee (requires linked Alby account)",
     )
     .action(async () => {
       await handleError(async () => {
