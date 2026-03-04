@@ -67,6 +67,7 @@ jobs:
             'rpcpassword=polarpass' \
             'rpcbind=127.0.0.1' \
             'rpcallowip=127.0.0.1' \
+            'fallbackfee=0.0002' \
             > /tmp/bitcoin-regtest/bitcoin.conf
 
           bitcoin-28.1/bin/bitcoind -datadir=/tmp/bitcoin-regtest
