@@ -61,6 +61,9 @@ test("unlock works if node is started", { timeout: 60_000 }, async () => {
 
   await waitForInfo(HUB_URL, (i) => i.running);
 
+  // avoid rate limit
+  await new Promise((r) => setTimeout(r, 3000));
+
   const result = runCommand([
     "--url",
     HUB_URL,
