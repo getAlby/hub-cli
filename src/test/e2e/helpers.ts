@@ -61,6 +61,38 @@ export async function spawnHub(
   return { hubProcess, workDir };
 }
 
+export async function spawnMutinynetHub(
+  port: number,
+  tmpPrefix: string,
+  ldkPort = DEFAULT_LDK_PORT,
+): Promise<{ hubProcess: ChildProcess; workDir: string }> {
+  const workDir = mkdtempSync(join(tmpdir(), tmpPrefix));
+
+  console.log("Hub WORK_DIR:", workDir);
+
+  const hubProcess = spawn(HUB_BINARY, [], {
+    env: {
+      ...process.env,
+      WORK_DIR: workDir,
+      PORT: String(port),
+      NETWORK: "signet",
+      MEMPOOL_API: "https://mutinynet.com/api",
+      LDK_ESPLORA_SERVER: "https://mutinynet.com/api",
+      LDK_GOSSIP_SOURCE: "https://rgs.mutinynet.com/snapshot",
+      LDK_LISTENING_ADDRESSES: `0.0.0.0:${ldkPort}`,
+      LDK_ANNOUNCEMENT_ADDRESSES: `127.0.0.1:${ldkPort}`,
+    },
+    stdio: "pipe",
+  });
+
+  hubProcess.stdout?.on("data", (d) => process.stdout.write(`[hub] ${d}`));
+  hubProcess.stderr?.on("data", (d) => process.stderr.write(`[hub] ${d}`));
+
+  await waitForHub(`http://localhost:${port}`);
+
+  return { hubProcess, workDir };
+}
+
 export async function waitForHub(
   url: string,
   timeoutMs = 20_000,
