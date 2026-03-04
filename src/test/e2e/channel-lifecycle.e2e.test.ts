@@ -10,7 +10,10 @@ import {
   waitForBalances,
   waitForChannels,
 } from "./helpers";
-import type { NodeConnectionInfo } from "../../types.js";
+import type {
+  ListTransactionsResponse,
+  NodeConnectionInfo,
+} from "../../types.js";
 
 const HUB_A_PORT = 18083;
 const HUB_B_PORT = 18084;
@@ -173,6 +176,61 @@ test("connects hub A as peer to hub B", { timeout: 60_000 }, async () => {
     (p: { nodeId: string }) => p.nodeId === hubBConnInfo.pubkey,
   );
   expect(hubBPeer).toBeDefined();
+
+  // Hub A: verify Hub B peer is connected
+  const peersAResult = runCommand([
+    "--url",
+    HUB_A_URL,
+    "--token",
+    tokenA,
+    "list-peers",
+  ]);
+  expect(peersAResult.status).toBe(0);
+  const peersA = JSON.parse(peersAResult.stdout) as {
+    nodeId: string;
+    isConnected: boolean;
+  }[];
+  const hubBPeerA = peersA.find((p) => p.nodeId === hubBConnInfo.pubkey);
+  expect(hubBPeerA).toBeDefined();
+  expect(hubBPeerA!.isConnected).toBe(true);
+
+  // Hub B: verify at least one connected peer exists
+  const peersBResult = runCommand([
+    "--url",
+    HUB_B_URL,
+    "--token",
+    tokenB,
+    "list-peers",
+  ]);
+  expect(peersBResult.status).toBe(0);
+  const peersB = JSON.parse(peersBResult.stdout) as { isConnected: boolean }[];
+  expect(peersB.some((p) => p.isConnected)).toBe(true);
+
+  // Hub A: get-node-status pre-channel baseline
+  const nodeStatusResult = runCommand([
+    "--url",
+    HUB_A_URL,
+    "--token",
+    tokenA,
+    "get-node-status",
+  ]);
+  expect(nodeStatusResult.status).toBe(0);
+  const nodeStatus = JSON.parse(nodeStatusResult.stdout) as {
+    isReady: boolean;
+  };
+  expect(nodeStatus.isReady).toBe(true);
+
+  // Hub A: get-health pre-channel baseline
+  const healthResult = runCommand([
+    "--url",
+    HUB_A_URL,
+    "--token",
+    tokenA,
+    "get-health",
+  ]);
+  expect(healthResult.status).toBe(0);
+  const healthOutput = JSON.parse(healthResult.stdout);
+  expect(healthOutput).toEqual({}); // no alarms
 });
 
 test("opens channel from hub A to hub B", { timeout: 120_000 }, async () => {
@@ -214,6 +272,50 @@ test("opens channel from hub A to hub B", { timeout: 120_000 }, async () => {
   );
   const hubBActiveChannel = hubBChannels.find((c) => c.active);
   expect(hubBActiveChannel).toBeDefined();
+
+  // Hub A: list-channels via CLI and verify active channel to Hub B
+  const listChAResult = runCommand([
+    "--url",
+    HUB_A_URL,
+    "--token",
+    tokenA,
+    "list-channels",
+  ]);
+  expect(listChAResult.status).toBe(0);
+  const listChA = JSON.parse(listChAResult.stdout) as {
+    remotePubkey: string;
+    active: boolean;
+  }[];
+  expect(Array.isArray(listChA)).toBe(true);
+  const activeChA = listChA.find(
+    (c) => c.remotePubkey === hubBConnInfo.pubkey && c.active,
+  );
+  expect(activeChA).toBeDefined();
+
+  // Hub B: list-channels via CLI and verify at least one active channel
+  const listChBResult = runCommand([
+    "--url",
+    HUB_B_URL,
+    "--token",
+    tokenB,
+    "list-channels",
+  ]);
+  expect(listChBResult.status).toBe(0);
+  const listChB = JSON.parse(listChBResult.stdout) as { active: boolean }[];
+  expect(Array.isArray(listChB)).toBe(true);
+  expect(listChB.some((c) => c.active)).toBe(true);
+
+  // Hub A: get-health post-channel
+  const healthPostResult = runCommand([
+    "--url",
+    HUB_A_URL,
+    "--token",
+    tokenA,
+    "get-health",
+  ]);
+  expect(healthPostResult.status).toBe(0);
+  const healthPostOutput = JSON.parse(healthPostResult.stdout);
+  expect(healthPostOutput).toEqual({}); // no alarms
 });
 
 test("sends sats from hub A to hub B", { timeout: 120_000 }, async () => {
@@ -404,6 +506,39 @@ test("sends sats from hub B back to hub A", { timeout: 120_000 }, async () => {
   expect(hubABalancesAfterData.lightning.totalSpendable).toBeGreaterThan(
     hubABalancesBeforeData.lightning.totalSpendable,
   );
+
+  // Hub A: list-transactions — should have at least one incoming settled transaction
+  const txAResult = runCommand([
+    "--url",
+    HUB_A_URL,
+    "--token",
+    tokenA,
+    "list-transactions",
+  ]);
+  expect(txAResult.status).toBe(0);
+  const txAData = JSON.parse(txAResult.stdout) as ListTransactionsResponse;
+  expect(txAData.totalCount).toBeGreaterThan(0);
+  expect(txAData.transactions.length).toBeGreaterThan(0);
+  const incomingSettledA = txAData.transactions.find(
+    (t) => t.type === "incoming" && t.state === "settled",
+  );
+  expect(incomingSettledA).toBeDefined();
+
+  // Hub B: list-transactions — should have at least one outgoing settled transaction
+  const txBResult = runCommand([
+    "--url",
+    HUB_B_URL,
+    "--token",
+    tokenB,
+    "list-transactions",
+  ]);
+  expect(txBResult.status).toBe(0);
+  const txBData = JSON.parse(txBResult.stdout) as ListTransactionsResponse;
+  expect(txBData.totalCount).toBeGreaterThan(0);
+  const outgoingSettledB = txBData.transactions.find(
+    (t) => t.type === "outgoing" && t.state === "settled",
+  );
+  expect(outgoingSettledB).toBeDefined();
 });
 
 test(
