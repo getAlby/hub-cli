@@ -4,10 +4,14 @@ export class HubClient {
   constructor(
     private readonly baseUrl: string,
     private readonly token?: string,
+    private readonly extraHeaders: Record<string, string> = {},
   ) {}
 
   private headers(): Record<string, string> {
-    const h: Record<string, string> = { "Content-Type": "application/json" };
+    const h: Record<string, string> = {
+      "Content-Type": "application/json",
+      ...this.extraHeaders,
+    };
     if (this.token) {
       h["Authorization"] = `Bearer ${this.token}`;
     }

@@ -10,6 +10,17 @@ import { homedir } from "node:os";
 import { join } from "node:path";
 import { HubClient } from "./client.js";
 
+function loadAlbyCloudConfig(): { hubName: string } | null {
+  const filePath = join(homedir(), ".hub-cli", "alby-cloud.txt");
+  try {
+    const hubName = readFileSync(filePath, "utf-8").trim();
+    if (hubName) return { hubName };
+  } catch {
+    // file doesn't exist
+  }
+  return null;
+}
+
 const CONFIG_DIR = join(homedir(), ".hub-cli");
 
 function tokenPath(name?: string): string {
@@ -38,7 +49,14 @@ export function getClient(program: Command): HubClient {
     hub?: string;
   }>();
 
-  const url = opts.url.replace(/\/$/, "");
+  const albyCloud = loadAlbyCloudConfig();
+
+  // Resolve URL: explicit flag/env > alby-cloud.txt default > localhost default
+  let url = opts.url.replace(/\/$/, "");
+  const usingDefaultUrl = url === "http://localhost:8080";
+  if (usingDefaultUrl && albyCloud) {
+    url = "https://my.albyhub.com";
+  }
 
   // Token resolution order: --token flag, HUB_TOKEN env, file
   let token: string | undefined = opts.token ?? process.env.HUB_TOKEN;
@@ -46,7 +64,25 @@ export function getClient(program: Command): HubClient {
     token = loadToken(opts.hub);
   }
 
-  return new HubClient(url, token);
+  // Alby Cloud headers
+  const extraHeaders: Record<string, string> = {};
+  const parsedUrl = new URL(url);
+  if (parsedUrl.hostname === "my.albyhub.com") {
+    const hubName = process.env.ALBY_HUB_NAME ?? albyCloud?.hubName;
+    if (!hubName) {
+      console.error(
+        JSON.stringify({
+          message:
+            "Alby Cloud hub name is required. Save it with: echo nwcXXX > ~/.hub-cli/alby-cloud.txt (find your hub name at https://my.albyhub.com/settings/developer)",
+        }),
+      );
+      process.exit(1);
+    }
+    extraHeaders["AlbyHub-Name"] = hubName;
+    extraHeaders["AlbyHub-Region"] = "fra";
+  }
+
+  return new HubClient(url, token, extraHeaders);
 }
 
 export function output(data: unknown): void {

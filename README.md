@@ -33,6 +33,24 @@ npx @getalby/hub-cli start --password YOUR_PASSWORD --save
 
 Most commands require a JWT token. Call `start` after every hub shutdown (e.g. machine restart) to launch the node and get a token:
 
+### Alby Cloud
+
+If you're using [Alby Cloud](https://getalby.com/alby-hub):
+
+1. Complete the onboarding wizard at https://getalby.com/alby-hub in a browser (sets the hub password — one-time, requires human interaction)
+2. Find your hub name (e.g. `nwcxxxxxxxxxx`) at https://my.albyhub.com/settings/developer (shown next to the developer access token — the token itself is not needed)
+3. Save it once:
+   ```bash
+   echo "nwcxxxxxxxxxx" > ~/.hub-cli/alby-cloud.txt
+   ```
+4. The CLI now auto-connects to `https://my.albyhub.com` with the correct routing headers. Use `start`/`unlock` normally:
+   ```bash
+   npx @getalby/hub-cli start --password YOUR_PASSWORD --save
+   npx @getalby/hub-cli balances
+   ```
+
+To override the hub name for a single invocation, set `ALBY_HUB_NAME` env var.
+
 ```bash
 npx @getalby/hub-cli start --password YOUR_PASSWORD --save
 ```
