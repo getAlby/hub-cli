@@ -37,8 +37,7 @@ program
     "Hub URL",
     process.env.HUB_URL ?? "http://localhost:8080",
   )
-  .option("-t, --token <jwt>", "JWT token (or set HUB_TOKEN env)")
-  .option("--hub <name>", "Named hub (loads token from ~/.hub-cli/token-<name>.jwt)");
+  .option("-t, --token <jwt>", "JWT token (or set HUB_TOKEN env)");
 
 registerSetupCommand(program);
 registerUnlockCommand(program);

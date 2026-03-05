@@ -15,7 +15,6 @@ npx @getalby/hub-cli [options] <command>
 ```
 -u, --url <url>     Hub URL (default: http://localhost:8080 or HUB_URL env)
 -t, --token <jwt>   JWT token (or set HUB_TOKEN env)
---hub <name>        Named hub (loads token from ~/.hub-cli/token-<name>.jwt)
 ```
 
 ## First-Time Setup
@@ -53,21 +52,13 @@ export HUB_TOKEN="eyJ..."
 npx @getalby/hub-cli balances
 ```
 
-**Named hubs** (for managing multiple hubs):
-
-```bash
-npx @getalby/hub-cli start --url http://remote:8080 --password PWD --save-as production
-npx @getalby/hub-cli balances --hub production
-```
-
 **Token storage locations:**
 
-| Location                      | Used when                            |
-| ----------------------------- | ------------------------------------ |
-| `~/.hub-cli/token.jwt`        | `--save` flag or default             |
-| `~/.hub-cli/token-<name>.jwt` | `--save-as <name>` or `--hub <name>` |
-| `HUB_TOKEN` env var           | Always checked before file           |
-| `-t, --token <jwt>`           | Highest priority                     |
+| Location               | Used when                  |
+| ---------------------- | -------------------------- |
+| `~/.hub-cli/token.jwt` | `--save` flag or default   |
+| `HUB_TOKEN` env var    | Always checked before file |
+| `-t, --token <jwt>`    | Highest priority           |
 
 ## Testing with Mutinynet
 
