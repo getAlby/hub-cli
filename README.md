@@ -2,7 +2,7 @@
 
 CLI for managing [Alby Hub](https://github.com/getAlby/hub) — a self-custodial Lightning node.
 
-Built for agents — use with the [Alby Hub CLI Skill](https://github.com/getAlby/hub-cli-skill).
+Built for agents — use with the [Alby Hub Skill](https://github.com/getAlby/hub-skill).
 
 ## Usage
 
