@@ -2,7 +2,7 @@ import { Command } from "commander";
 import { ChannelPeerSuggestion } from "../types.js";
 import { getClient, handleError, output } from "../utils.js";
 
-export function registerChannelSuggestionsCommand(program: Command): void {
+export function registerListChannelSuggestionsCommand(program: Command): void {
   program
     .command("get-channel-suggestions")
     .description(

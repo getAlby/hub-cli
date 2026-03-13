@@ -46,7 +46,7 @@ If you're using [Alby Cloud](https://getalby.com/alby-hub):
 4. The CLI now auto-connects to `https://my.albyhub.com` with the correct routing headers. Use `start`/`unlock` normally:
    ```bash
    npx @getalby/hub-cli start --password YOUR_PASSWORD --save
-   npx @getalby/hub-cli balances
+   npx @getalby/hub-cli get-balances
    ```
 
 To override the hub name for a single invocation, set `ALBY_HUB_NAME` env var.
@@ -140,7 +140,7 @@ npx @getalby/hub-cli get-health
 
 ```bash
 # Lightning + on-chain balances
-npx @getalby/hub-cli balances
+npx @getalby/hub-cli get-balances
 
 # Get an on-chain deposit address
 npx @getalby/hub-cli get-onchain-address
@@ -200,6 +200,21 @@ npx @getalby/hub-cli pay-invoice <invoice>
 ```bash
 # Stop the Lightning node (hub HTTP server keeps running)
 npx @getalby/hub-cli stop
+
+# Trigger a wallet sync (queued, may take up to a minute)
+npx @getalby/hub-cli sync
+
+# Export wallet recovery phrase to a file (default: ~/.hub-cli/albyhub.recovery)
+npx @getalby/hub-cli backup --password YOUR_PASSWORD
+
+# Export to a custom path
+npx @getalby/hub-cli backup --password YOUR_PASSWORD --output /path/to/backup.recovery
+
+# Change the hub unlock password
+npx @getalby/hub-cli change-password \
+  --current-password YOUR_PASSWORD \
+  --confirm-current-password YOUR_PASSWORD \
+  --new-password NEW_PASSWORD
 ```
 
 ### Payments
@@ -210,6 +225,9 @@ npx @getalby/hub-cli pay-invoice lnbc...
 
 # Pay a zero-amount invoice, specifying the amount
 npx @getalby/hub-cli pay-invoice lnbc... --amount 1000
+
+# Pay a lightning address (user@domain), amount in satoshis
+npx @getalby/hub-cli pay-lightning-address user@domain.com --amount 1000
 
 # Create an invoice
 npx @getalby/hub-cli make-invoice --amount 1000 --description "test"
@@ -269,7 +287,7 @@ npx @getalby/hub-cli create-app --name "Isolated App" --isolated --unlock-passwo
 
 | Command               | Description                   | Required Options |
 | --------------------- | ----------------------------- | ---------------- |
-| `balances`            | Lightning + on-chain balances | —                |
+| `get-balances`        | Lightning + on-chain balances | —                |
 | `get-onchain-address` | On-chain deposit address      | —                |
 
 ### Channels & Peers
@@ -288,16 +306,20 @@ npx @getalby/hub-cli create-app --name "Isolated App" --isolated --unlock-passwo
 
 ### Node Management
 
-| Command | Description                                         | Required Options |
-| ------- | --------------------------------------------------- | ---------------- |
-| `stop`  | Stop the Lightning node (HTTP server keeps running) | —                |
+| Command           | Description                                         | Required Options                                                      |
+| ----------------- | --------------------------------------------------- | --------------------------------------------------------------------- |
+| `stop`            | Stop the Lightning node (HTTP server keeps running) | —                                                                     |
+| `sync`            | Trigger a wallet sync                               | —                                                                     |
+| `backup`          | Export wallet recovery phrase to a file             | `--password`                                                          |
+| `change-password` | Change the hub unlock password                      | `--current-password`, `--confirm-current-password`, `--new-password`  |
 
 ### Payments
 
-| Command        | Description             | Required Options       |
-| -------------- | ----------------------- | ---------------------- |
-| `pay-invoice`  | Pay a BOLT11 invoice    | `<invoice>` (argument) |
-| `make-invoice` | Create a BOLT11 invoice | `--amount`             |
+| Command                   | Description                      | Required Options              |
+| ------------------------- | -------------------------------- | ----------------------------- |
+| `pay-invoice`             | Pay a BOLT11 invoice             | `<invoice>` (argument)        |
+| `pay-lightning-address`   | Pay a lightning address          | `<address>` (argument), `--amount` |
+| `make-invoice`            | Create a BOLT11 invoice          | `--amount`                    |
 
 ### Transactions
 

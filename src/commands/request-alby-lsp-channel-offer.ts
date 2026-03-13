@@ -2,7 +2,7 @@ import { Command } from "commander";
 import { LSPChannelOffer } from "../types.js";
 import { getClient, handleError, output } from "../utils.js";
 
-export function registerChannelOfferCommand(program: Command): void {
+export function registerRequestAlbyChannelOfferCommand(program: Command): void {
   program
     .command("request-alby-lsp-channel-offer")
     .description(

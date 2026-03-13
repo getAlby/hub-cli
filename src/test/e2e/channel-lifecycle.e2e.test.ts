@@ -343,7 +343,7 @@ test("sends sats from hub A to hub B", { timeout: 120_000 }, async () => {
     HUB_A_URL,
     "--token",
     tokenA,
-    "balances",
+    "get-balances",
   ]);
   expect(balancesBeforeResult.status).toBe(0);
   const balancesBeforeData = JSON.parse(balancesBeforeResult.stdout) as {
@@ -369,7 +369,7 @@ test("sends sats from hub A to hub B", { timeout: 120_000 }, async () => {
     HUB_A_URL,
     "--token",
     tokenA,
-    "balances",
+    "get-balances",
   ]);
   expect(hubABalancesAfterResult.status).toBe(0);
   const hubABalancesAfterData = JSON.parse(hubABalancesAfterResult.stdout) as {
@@ -394,7 +394,7 @@ test("sends sats from hub A to hub B", { timeout: 120_000 }, async () => {
     HUB_B_URL,
     "--token",
     tokenB,
-    "balances",
+    "get-balances",
   ]);
   const hubBBalancesAfterData = JSON.parse(hubBBalancesAfterResult.stdout) as {
     lightning: { totalSpendable: number };
@@ -427,7 +427,7 @@ test("sends sats from hub B back to hub A", { timeout: 120_000 }, async () => {
     HUB_A_URL,
     "--token",
     tokenA,
-    "balances",
+    "get-balances",
   ]);
   expect(hubABalancesBeforeResult.status).toBe(0);
   const hubABalancesBeforeData = JSON.parse(
@@ -442,7 +442,7 @@ test("sends sats from hub B back to hub A", { timeout: 120_000 }, async () => {
     HUB_B_URL,
     "--token",
     tokenB,
-    "balances",
+    "get-balances",
   ]);
   expect(hubBBalancesBeforeResult.status).toBe(0);
   const hubBBalancesBeforeData = JSON.parse(
@@ -470,7 +470,7 @@ test("sends sats from hub B back to hub A", { timeout: 120_000 }, async () => {
     HUB_B_URL,
     "--token",
     tokenB,
-    "balances",
+    "get-balances",
   ]);
   expect(hubBBalancesAfterResult.status).toBe(0);
   const hubBBalancesAfterData = JSON.parse(hubBBalancesAfterResult.stdout) as {
@@ -497,7 +497,7 @@ test("sends sats from hub B back to hub A", { timeout: 120_000 }, async () => {
     HUB_A_URL,
     "--token",
     tokenA,
-    "balances",
+    "get-balances",
   ]);
   expect(hubABalancesAfterResult.status).toBe(0);
   const hubABalancesAfterData = JSON.parse(hubABalancesAfterResult.stdout) as {
@@ -570,7 +570,7 @@ test(
       HUB_A_URL,
       "--token",
       tokenA,
-      "balances",
+      "get-balances",
     ]);
     expect(balancesBeforeResult.status).toBe(0);
     const balancesBeforeData = JSON.parse(balancesBeforeResult.stdout) as {

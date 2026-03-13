@@ -2,7 +2,7 @@ import { Command } from "commander";
 import { HealthResponse } from "../types.js";
 import { getClient, handleError, output } from "../utils.js";
 
-export function registerHealthCommand(program: Command): void {
+export function registerGetHealthCommand(program: Command): void {
   program
     .command("get-health")
     .description(

@@ -2,9 +2,9 @@ import { Command } from "commander";
 import { BalancesResponse } from "../types.js";
 import { getClient, handleError, output } from "../utils.js";
 
-export function registerBalancesCommand(program: Command): void {
+export function registerGetBalancesCommand(program: Command): void {
   program
-    .command("balances")
+    .command("get-balances")
     .description("Get Lightning and on-chain balances")
     .action(async () => {
       await handleError(async () => {

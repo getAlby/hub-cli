@@ -2,7 +2,7 @@
   "name": "@getalby/hub-cli",
   "description": "CLI for managing Alby Hub - a self-custodial Lightning node",
   "repository": "https://github.com/getAlby/hub.git",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "main": "build/index.js",
   "bin": {
@@ -32,6 +32,7 @@
   "author": "Alby contributors",
   "license": "Apache-2.0",
   "dependencies": {
+    "@getalby/lightning-tools": "^7.0.2",
     "commander": "^13.1.0"
   },
   "devDependencies": {

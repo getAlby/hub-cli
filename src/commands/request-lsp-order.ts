@@ -2,7 +2,7 @@ import { Command } from "commander";
 import { LSPOrderResponse } from "../types.js";
 import { getClient, handleError, output } from "../utils.js";
 
-export function registerLspOrderCommand(program: Command): void {
+export function registerRequestLspOrderCommand(program: Command): void {
   program
     .command("request-lsp-order")
     .description(
