@@ -2,7 +2,7 @@ import { Command } from "commander";
 import { InfoResponse } from "../types.js";
 import { getClient, handleError, output } from "../utils.js";
 
-export function registerInfoCommand(program: Command): void {
+export function registerGetInfoCommand(program: Command): void {
   program
     .command("get-info")
     .description("Get hub status, version, and configuration")

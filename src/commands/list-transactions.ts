@@ -2,11 +2,15 @@ import { Command } from "commander";
 import { ListTransactionsResponse } from "../types.js";
 import { getClient, handleError, output } from "../utils.js";
 
-export function registerTransactionsCommand(program: Command): void {
+export function registerListTransactionsCommand(program: Command): void {
   program
     .command("list-transactions")
     .description("List payment history")
-    .option("--limit <number>", "Maximum number of transactions to return", "20")
+    .option(
+      "--limit <number>",
+      "Maximum number of transactions to return",
+      "20",
+    )
     .option("--offset <number>", "Pagination offset", "0")
     .action(async (opts: { limit: string; offset: string }) => {
       await handleError(async () => {

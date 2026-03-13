@@ -10,8 +10,8 @@ import {
   killHub,
   waitForInfo,
   waitForChannels,
-} from "./helpers.js";
-import type { ChannelPeerSuggestion, Transaction } from "../../types.js";
+} from "../helpers.js";
+import type { ChannelPeerSuggestion, Transaction } from "../../../types.js";
 
 try {
   process.loadEnvFile(join(E2E_DIR, ".env"));

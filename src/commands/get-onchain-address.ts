@@ -1,7 +1,7 @@
 import { Command } from "commander";
 import { getClient, handleError, output } from "../utils.js";
 
-export function registerWalletAddressCommand(program: Command): void {
+export function registerGetWalletAddressCommand(program: Command): void {
   program
     .command("get-onchain-address")
     .description("Get an on-chain Bitcoin deposit address")

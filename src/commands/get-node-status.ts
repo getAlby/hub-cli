@@ -2,7 +2,7 @@ import { Command } from "commander";
 import { NodeStatus } from "../types.js";
 import { getClient, handleError, output } from "../utils.js";
 
-export function registerNodeStatusCommand(program: Command): void {
+export function registerGetNodeStatusCommand(program: Command): void {
   program
     .command("get-node-status")
     .description("Get Lightning node readiness status")
