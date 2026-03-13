@@ -112,7 +112,7 @@ test("stop fails without a token", { timeout: 60_000 }, async () => {
   expect(stop.status).toBe(1);
   const output = JSON.parse(stop.stdout);
   expect(typeof output.error).toBe("string");
-  expect(output.error).toEqual("invalid or expired jwt");
+  expect(output.error).toEqual("missing or malformed jwt");
 });
 
 test(
