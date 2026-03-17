@@ -15,6 +15,7 @@ import { registerListTransactionsCommand } from "./commands/list-transactions.js
 import { registerLookupTransactionCommand } from "./commands/lookup-transaction.js";
 import { registerPayInvoiceCommand } from "./commands/pay-invoice.js";
 import { registerMakeInvoiceCommand } from "./commands/make-invoice.js";
+import { registerMakeOfferCommand } from "./commands/make-offer.js";
 import { registerListAppsCommand } from "./commands/list-apps.js";
 import { registerCreateAppCommand } from "./commands/create-app.js";
 import { registerListPeersCommand } from "./commands/list-peers.js";
@@ -35,7 +36,7 @@ const program = new Command();
 program
   .name("hub-cli")
   .description("CLI for managing Alby Hub - a self-custodial Lightning node")
-  .version("0.2.1")
+  .version("0.3.0")
   .option(
     "-u, --url <url>",
     "Hub URL",
@@ -57,6 +58,7 @@ registerListTransactionsCommand(program);
 registerLookupTransactionCommand(program);
 registerPayInvoiceCommand(program);
 registerMakeInvoiceCommand(program);
+registerMakeOfferCommand(program);
 registerListAppsCommand(program);
 registerCreateAppCommand(program);
 registerListPeersCommand(program);

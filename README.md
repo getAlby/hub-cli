@@ -231,6 +231,9 @@ npx @getalby/hub-cli pay-lightning-address user@domain.com --amount 1000
 
 # Create an invoice
 npx @getalby/hub-cli make-invoice --amount 1000 --description "test"
+
+# Create a BOLT-12 offer (requires LDK backend)
+npx @getalby/hub-cli make-offer --description "donations"
 ```
 
 ### Transactions
@@ -320,6 +323,7 @@ npx @getalby/hub-cli create-app --name "Isolated App" --isolated --unlock-passwo
 | `pay-invoice`             | Pay a BOLT11 invoice             | `<invoice>` (argument)        |
 | `pay-lightning-address`   | Pay a lightning address          | `<address>` (argument), `--amount` |
 | `make-invoice`            | Create a BOLT11 invoice          | `--amount`                    |
+| `make-offer`              | Create a BOLT-12 offer           | —                             |
 
 ### Transactions
 

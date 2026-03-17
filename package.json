@@ -2,7 +2,7 @@
   "name": "@getalby/hub-cli",
   "description": "CLI for managing Alby Hub - a self-custodial Lightning node",
   "repository": "https://github.com/getAlby/hub-cli.git",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "type": "module",
   "main": "build/index.js",
   "bin": {
