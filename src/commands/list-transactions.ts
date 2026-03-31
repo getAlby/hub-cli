@@ -1,6 +1,6 @@
 import { Command } from "commander";
 import { ListTransactionsResponse } from "../types.js";
-import { getClient, handleError, output } from "../utils.js";
+import { getClient, handleError, mapTransaction, output } from "../utils.js";
 
 export function registerListTransactionsCommand(program: Command): void {
   program
@@ -22,7 +22,10 @@ export function registerListTransactionsCommand(program: Command): void {
         const result = await client.get<ListTransactionsResponse>(
           `/api/transactions?${params}`,
         );
-        output(result);
+        output({
+          ...result,
+          transactions: result.transactions.map(mapTransaction),
+        });
       });
     });
 }

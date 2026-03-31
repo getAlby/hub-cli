@@ -14,7 +14,13 @@ export function registerListChannelSuggestionsCommand(program: Command): void {
         const result = await client.get<ChannelPeerSuggestion[]>(
           "/api/channels/suggestions",
         );
-        output(result);
+        output(
+          result.map(({ minimumChannelSize, maximumChannelSize, ...rest }) => ({
+            ...rest,
+            minimumChannelSizeSat: minimumChannelSize,
+            maximumChannelSizeSat: maximumChannelSize,
+          })),
+        );
       });
     });
 }

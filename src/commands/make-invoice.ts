@@ -1,6 +1,6 @@
 import { Command } from "commander";
 import { Transaction } from "../types.js";
-import { getClient, handleError, output } from "../utils.js";
+import { getClient, handleError, mapTransaction, output } from "../utils.js";
 
 export function registerMakeInvoiceCommand(program: Command): void {
   program
@@ -15,7 +15,7 @@ export function registerMakeInvoiceCommand(program: Command): void {
           amount: opts.amount * 1000,
           description: opts.description,
         });
-        output(result);
+        output(mapTransaction(result));
       });
     });
 }

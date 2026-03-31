@@ -11,6 +11,8 @@ import {
   waitForChannels,
 } from "./helpers";
 import type {
+  BalancesResponse,
+  Channel,
   ListTransactionsResponse,
   NodeConnectionInfo,
 } from "../../types.js";
@@ -139,10 +141,10 @@ test("deposits on-chain funds to hub A", { timeout: 120_000 }, async () => {
   const balances = await waitForBalances(
     HUB_A_URL,
     tokenA,
-    (b) => b.onchain.spendable > 0,
+    (b) => b.onchain.spendableSat > 0,
     120_000,
   );
-  expect(balances.onchain.spendable).toBeGreaterThan(0);
+  expect(balances.onchain.spendableSat).toBeGreaterThan(0);
 });
 
 test("connects hub A as peer to hub B", { timeout: 60_000 }, async () => {
@@ -282,10 +284,7 @@ test("opens channel from hub A to hub B", { timeout: 120_000 }, async () => {
     "list-channels",
   ]);
   expect(listChAResult.status).toBe(0);
-  const listChA = JSON.parse(listChAResult.stdout) as {
-    remotePubkey: string;
-    active: boolean;
-  }[];
+  const listChA = JSON.parse(listChAResult.stdout) as Channel[];
   expect(Array.isArray(listChA)).toBe(true);
   const activeChA = listChA.find(
     (c) => c.remotePubkey === hubBConnInfo.pubkey && c.active,
@@ -301,7 +300,7 @@ test("opens channel from hub A to hub B", { timeout: 120_000 }, async () => {
     "list-channels",
   ]);
   expect(listChBResult.status).toBe(0);
-  const listChB = JSON.parse(listChBResult.stdout) as { active: boolean }[];
+  const listChB = JSON.parse(listChBResult.stdout) as Channel[];
   expect(Array.isArray(listChB)).toBe(true);
   expect(listChB.some((c) => c.active)).toBe(true);
 
@@ -346,10 +345,8 @@ test("sends sats from hub A to hub B", { timeout: 120_000 }, async () => {
     "get-balances",
   ]);
   expect(balancesBeforeResult.status).toBe(0);
-  const balancesBeforeData = JSON.parse(balancesBeforeResult.stdout) as {
-    lightning: { totalSpendable: number };
-  };
-  const hubASpendableBefore = balancesBeforeData.lightning.totalSpendable;
+  const balancesBeforeData = JSON.parse(balancesBeforeResult.stdout) as BalancesResponse;
+  const hubASpendableBefore = balancesBeforeData.lightning.totalSpendableSat;
   expect(hubASpendableBefore).toBeGreaterThan(0);
 
   // Hub A pays the invoice
@@ -372,10 +369,8 @@ test("sends sats from hub A to hub B", { timeout: 120_000 }, async () => {
     "get-balances",
   ]);
   expect(hubABalancesAfterResult.status).toBe(0);
-  const hubABalancesAfterData = JSON.parse(hubABalancesAfterResult.stdout) as {
-    lightning: { totalSpendable: number };
-  };
-  expect(hubABalancesAfterData.lightning.totalSpendable).toBeLessThan(
+  const hubABalancesAfterData = JSON.parse(hubABalancesAfterResult.stdout) as BalancesResponse;
+  expect(hubABalancesAfterData.lightning.totalSpendableSat).toBeLessThan(
     hubASpendableBefore,
   );
 
@@ -396,10 +391,8 @@ test("sends sats from hub A to hub B", { timeout: 120_000 }, async () => {
     tokenB,
     "get-balances",
   ]);
-  const hubBBalancesAfterData = JSON.parse(hubBBalancesAfterResult.stdout) as {
-    lightning: { totalSpendable: number };
-  };
-  expect(hubBBalancesAfterData.lightning.totalSpendable).toBeGreaterThan(0);
+  const hubBBalancesAfterData = JSON.parse(hubBBalancesAfterResult.stdout) as BalancesResponse;
+  expect(hubBBalancesAfterData.lightning.totalSpendableSat).toBeGreaterThan(0);
 });
 
 test("sends sats from hub B back to hub A", { timeout: 120_000 }, async () => {
@@ -432,9 +425,7 @@ test("sends sats from hub B back to hub A", { timeout: 120_000 }, async () => {
   expect(hubABalancesBeforeResult.status).toBe(0);
   const hubABalancesBeforeData = JSON.parse(
     hubABalancesBeforeResult.stdout,
-  ) as {
-    lightning: { totalSpendable: number };
-  };
+  ) as BalancesResponse;
 
   // Record Hub B's balance before payment
   const hubBBalancesBeforeResult = runCommand([
@@ -447,10 +438,8 @@ test("sends sats from hub B back to hub A", { timeout: 120_000 }, async () => {
   expect(hubBBalancesBeforeResult.status).toBe(0);
   const hubBBalancesBeforeData = JSON.parse(
     hubBBalancesBeforeResult.stdout,
-  ) as {
-    lightning: { totalSpendable: number };
-  };
-  const hubBSpendableBefore = hubBBalancesBeforeData.lightning.totalSpendable;
+  ) as BalancesResponse;
+  const hubBSpendableBefore = hubBBalancesBeforeData.lightning.totalSpendableSat;
   expect(hubBSpendableBefore).toBeGreaterThan(0);
 
   // Hub B pays the invoice
@@ -473,10 +462,8 @@ test("sends sats from hub B back to hub A", { timeout: 120_000 }, async () => {
     "get-balances",
   ]);
   expect(hubBBalancesAfterResult.status).toBe(0);
-  const hubBBalancesAfterData = JSON.parse(hubBBalancesAfterResult.stdout) as {
-    lightning: { totalSpendable: number };
-  };
-  expect(hubBBalancesAfterData.lightning.totalSpendable).toBeLessThan(
+  const hubBBalancesAfterData = JSON.parse(hubBBalancesAfterResult.stdout) as BalancesResponse;
+  expect(hubBBalancesAfterData.lightning.totalSpendableSat).toBeLessThan(
     hubBSpendableBefore,
   );
 
@@ -500,11 +487,9 @@ test("sends sats from hub B back to hub A", { timeout: 120_000 }, async () => {
     "get-balances",
   ]);
   expect(hubABalancesAfterResult.status).toBe(0);
-  const hubABalancesAfterData = JSON.parse(hubABalancesAfterResult.stdout) as {
-    lightning: { totalSpendable: number };
-  };
-  expect(hubABalancesAfterData.lightning.totalSpendable).toBeGreaterThan(
-    hubABalancesBeforeData.lightning.totalSpendable,
+  const hubABalancesAfterData = JSON.parse(hubABalancesAfterResult.stdout) as BalancesResponse;
+  expect(hubABalancesAfterData.lightning.totalSpendableSat).toBeGreaterThan(
+    hubABalancesBeforeData.lightning.totalSpendableSat,
   );
 
   // Hub A: list-transactions — should have at least one incoming settled transaction
@@ -554,10 +539,7 @@ test(
       "list-channels",
     ]);
     expect(channelsResult.status).toBe(0);
-    const channels = JSON.parse(channelsResult.stdout) as {
-      id: string;
-      remotePubkey: string;
-    }[];
+    const channels = JSON.parse(channelsResult.stdout) as Channel[];
     const channel = channels.find(
       (c) => c.remotePubkey === hubBConnInfo.pubkey,
     );
@@ -573,10 +555,8 @@ test(
       "get-balances",
     ]);
     expect(balancesBeforeResult.status).toBe(0);
-    const balancesBeforeData = JSON.parse(balancesBeforeResult.stdout) as {
-      onchain: { spendable: number };
-    };
-    const onchainBefore = balancesBeforeData.onchain.spendable;
+    const balancesBeforeData = JSON.parse(balancesBeforeResult.stdout) as BalancesResponse;
+    const onchainBefore = balancesBeforeData.onchain.spendableSat;
 
     // Close the channel
     const closeResult = runCommand([
@@ -605,9 +585,9 @@ test(
     const balancesAfter = await waitForBalances(
       HUB_A_URL,
       tokenA,
-      (b) => b.onchain.spendable > onchainBefore,
+      (b) => b.onchain.spendableSat > onchainBefore,
       120_000,
     );
-    expect(balancesAfter.onchain.spendable).toBeGreaterThan(onchainBefore);
+    expect(balancesAfter.onchain.spendableSat).toBeGreaterThan(onchainBefore);
   },
 );

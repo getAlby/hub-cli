@@ -1,6 +1,6 @@
 import { Command } from "commander";
 import { Transaction } from "../types.js";
-import { getClient, handleError, output } from "../utils.js";
+import { getClient, handleError, mapTransaction, output } from "../utils.js";
 
 export function registerLookupTransactionCommand(program: Command): void {
   program
@@ -12,7 +12,7 @@ export function registerLookupTransactionCommand(program: Command): void {
         const result = await client.get<Transaction>(
           `/api/transactions/${paymentHash}`,
         );
-        output(result);
+        output(mapTransaction(result));
       });
     });
 }

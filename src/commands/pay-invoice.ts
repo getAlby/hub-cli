@@ -1,6 +1,6 @@
 import { Command } from "commander";
 import { Transaction } from "../types.js";
-import { getClient, handleError, output } from "../utils.js";
+import { getClient, handleError, mapTransaction, output } from "../utils.js";
 
 export function registerPayInvoiceCommand(program: Command): void {
   program
@@ -18,7 +18,7 @@ export function registerPayInvoiceCommand(program: Command): void {
           `/api/payments/${invoice}`,
           Object.keys(body).length > 0 ? body : undefined,
         );
-        output(result);
+        output(mapTransaction(result));
       });
     });
 }
