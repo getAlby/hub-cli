@@ -27,17 +27,17 @@ export interface InfoResponse {
 }
 
 export interface LightningBalanceResponse {
-  totalSpendable: number;
-  totalReceivable: number;
-  nextMaxSpendable: number;
-  nextMaxReceivable: number;
+  totalSpendableSat: number;
+  totalReceivableSat: number;
+  nextMaxSpendableSat: number;
+  nextMaxReceivableSat: number;
 }
 
 export interface OnchainBalanceResponse {
-  spendable: number;
-  total: number;
-  reserved: number;
-  pendingBalancesFromChannelClosures: number;
+  spendableSat: number;
+  totalSat: number;
+  reservedSat: number;
+  pendingBalancesFromChannelClosuresSat: number;
 }
 
 export interface BalancesResponse {
