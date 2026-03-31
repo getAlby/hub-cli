@@ -47,6 +47,7 @@ export interface BalancesResponse {
 
 export interface Channel {
   localBalance: number;
+  localSpendableBalance: number;
   remoteBalance: number;
   remotePubkey: string;
   fundingTxId: string;

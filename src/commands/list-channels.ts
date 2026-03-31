@@ -9,8 +9,29 @@ export function registerListChannelsCommand(program: Command): void {
     .action(async () => {
       await handleError(async () => {
         const client = getClient(program);
-        const result = await client.get<Channel[]>("/api/channels");
-        output(result);
+        const result = await client.get<(Channel & { internalChannel?: unknown })[]>("/api/channels");
+        output(
+          result.map(
+            ({
+              localBalance,
+              localSpendableBalance,
+              remoteBalance,
+              forwardingFeeBaseMsat,
+              unspendablePunishmentReserve,
+              counterpartyUnspendablePunishmentReserve,
+              internalChannel,
+              ...rest
+            }) => ({
+              ...rest,
+              localBalanceSat: Math.floor(localBalance / 1000),
+              localSpendableBalanceSat: Math.floor(localSpendableBalance / 1000),
+              remoteBalanceSat: Math.floor(remoteBalance / 1000),
+              forwardingFeeBaseSat: Math.floor(forwardingFeeBaseMsat / 1000),
+              unspendablePunishmentReserveSat: unspendablePunishmentReserve,
+              counterpartyUnspendablePunishmentReserveSat: counterpartyUnspendablePunishmentReserve,
+            }),
+          ),
+        );
       });
     });
 }
