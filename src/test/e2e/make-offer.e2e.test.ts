@@ -99,7 +99,7 @@ beforeAll(async () => {
   await waitForBalances(
     HUB_A_URL,
     tokenA,
-    (b) => b.onchain.spendable > 0,
+    (b) => b.onchain.spendableSat > 0,
     120_000,
   );
 

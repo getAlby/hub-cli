@@ -165,6 +165,21 @@ export async function bitcoinRpc(
   return json.result;
 }
 
+interface RawAPIBalancesResponse {
+  lightning: {
+    totalSpendable: number;
+    totalReceivable: number;
+    nextMaxSpendable: number;
+    nextMaxReceivable: number;
+  };
+  onchain: {
+    spendable: number;
+    total: number;
+    reserved: number;
+    pendingBalancesFromChannelClosures: number;
+  };
+}
+
 export async function waitForBalances(
   url: string,
   token: string,
@@ -178,7 +193,21 @@ export async function waitForBalances(
         headers: { Authorization: `Bearer ${token}` },
       });
       if (res.ok) {
-        const balances = (await res.json()) as BalancesResponse;
+        const raw = (await res.json()) as RawAPIBalancesResponse;
+        const balances: BalancesResponse = {
+          lightning: {
+            totalSpendableSat: Math.floor(raw.lightning.totalSpendable / 1000),
+            totalReceivableSat: Math.floor(raw.lightning.totalReceivable / 1000),
+            nextMaxSpendableSat: Math.floor(raw.lightning.nextMaxSpendable / 1000),
+            nextMaxReceivableSat: Math.floor(raw.lightning.nextMaxReceivable / 1000),
+          },
+          onchain: {
+            spendableSat: raw.onchain.spendable,
+            totalSat: raw.onchain.total,
+            reservedSat: raw.onchain.reserved,
+            pendingBalancesFromChannelClosuresSat: raw.onchain.pendingBalancesFromChannelClosures,
+          },
+        };
         if (condition(balances)) return balances;
       }
     } catch {
