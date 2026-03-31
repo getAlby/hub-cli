@@ -9,6 +9,7 @@ import {
 import { homedir } from "node:os";
 import { join } from "node:path";
 import { HubClient } from "./client.js";
+import { Transaction } from "./types.js";
 
 function loadAlbyCloudConfig(): { hubName: string } | null {
   const filePath = join(homedir(), ".hub-cli", "alby-cloud.txt");
@@ -83,6 +84,20 @@ export function getClient(program: Command): HubClient {
   }
 
   return new HubClient(url, token, extraHeaders);
+}
+
+export function mapTransaction(
+  tx: Transaction,
+): Omit<Transaction, "amount" | "feesPaid"> & {
+  amountSat: number;
+  feesPaidSat: number;
+} {
+  const { amount, feesPaid, ...rest } = tx;
+  return {
+    ...rest,
+    amountSat: Math.floor(amount / 1000),
+    feesPaidSat: Math.floor(feesPaid / 1000),
+  };
 }
 
 export function output(data: unknown): void {
