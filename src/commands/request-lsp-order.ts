@@ -40,7 +40,14 @@ export function registerRequestLspOrderCommand(program: Command): void {
               public: opts.public,
             },
           );
-          output(result);
+          const { fee, invoiceAmount, incomingLiquidity, outgoingLiquidity } = result;
+          output({
+            invoice: result.invoice,
+            feeSat: fee,
+            invoiceAmountSat: invoiceAmount,
+            incomingLiquiditySat: incomingLiquidity,
+            outgoingLiquiditySat: outgoingLiquidity,
+          });
         });
       },
     );
