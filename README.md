@@ -215,6 +215,12 @@ npx @getalby/hub-cli change-password \
   --current-password YOUR_PASSWORD \
   --confirm-current-password YOUR_PASSWORD \
   --new-password NEW_PASSWORD
+
+# Connect your Alby account (step 1: get the authorization URL)
+npx @getalby/hub-cli connect-alby-account
+
+# Connect your Alby account (step 2: submit the authorization code)
+npx @getalby/hub-cli connect-alby-account --code YOUR_AUTH_CODE
 ```
 
 ### Payments
@@ -311,10 +317,11 @@ npx @getalby/hub-cli create-app --name "Isolated App" --isolated --unlock-passwo
 
 | Command           | Description                                         | Required Options                                                      |
 | ----------------- | --------------------------------------------------- | --------------------------------------------------------------------- |
-| `stop`            | Stop the Lightning node (HTTP server keeps running) | —                                                                     |
-| `sync`            | Trigger a wallet sync                               | —                                                                     |
-| `backup`          | Export wallet recovery phrase to a file             | `--password`                                                          |
-| `change-password` | Change the hub unlock password                      | `--current-password`, `--confirm-current-password`, `--new-password`  |
+| `stop`                   | Stop the Lightning node (HTTP server keeps running)  | —                                                                    |
+| `sync`                   | Trigger a wallet sync                                | —                                                                    |
+| `backup`                 | Export wallet recovery phrase to a file              | `--password`                                                         |
+| `change-password`        | Change the hub unlock password                       | `--current-password`, `--confirm-current-password`, `--new-password` |
+| `connect-alby-account`   | Connect your Alby account (returns auth URL or confirms connection) | `--code` (optional, step 2)                         |
 
 ### Payments
 
