@@ -30,6 +30,7 @@ import { registerSyncCommand } from "./commands/sync.js";
 import { registerBackupMnemonicCommand } from "./commands/backup-mnemonic.js";
 import { registerChangePasswordCommand } from "./commands/change-password.js";
 import { registerRequestInvoiceFromLightningAddressCommand } from "./commands/request-invoice-from-lightning-address.js";
+import { registerConnectAlbyAccountCommand } from "./commands/connect-alby-account.js";
 
 const program = new Command();
 
@@ -73,5 +74,6 @@ registerSyncCommand(program);
 registerBackupMnemonicCommand(program);
 registerChangePasswordCommand(program);
 registerRequestInvoiceFromLightningAddressCommand(program);
+registerConnectAlbyAccountCommand(program);
 
 program.parse();
