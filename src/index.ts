@@ -37,7 +37,7 @@ const program = new Command();
 program
   .name("hub-cli")
   .description("CLI for managing Alby Hub - a self-custodial Lightning node")
-  .version("0.3.0")
+  .version("0.4.0")
   .option(
     "-u, --url <url>",
     "Hub URL",
