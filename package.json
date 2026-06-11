@@ -32,7 +32,6 @@
   "author": "Alby contributors",
   "license": "Apache-2.0",
   "dependencies": {
-    "@getalby/lightning-tools": "^7.0.2",
     "commander": "^13.1.0"
   },
   "devDependencies": {
