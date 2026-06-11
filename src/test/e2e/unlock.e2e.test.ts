@@ -34,8 +34,9 @@ test("unlock fails if node is not started", () => {
   expect(result.status).toBe(1);
   const output = JSON.parse(result.stdout);
   expect(typeof output.error).toBe("string");
-  // TODO: hub should return a better error message here
-  expect(output.error).toEqual("Failed to save session: config not unlocked");
+  expect(output.error).toEqual(
+    "Node is not running, start it before unlocking.",
+  );
 });
 
 test("unlock works if node is started", { timeout: 60_000 }, async () => {
