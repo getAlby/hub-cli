@@ -163,6 +163,7 @@ export interface CreateAppRequest {
   expiresAt?: string;
   scopes: string[];
   isolated?: boolean;
+  metadata?: Record<string, unknown>;
   unlockPassword?: string;
 }
 

@@ -272,6 +272,9 @@ npx @getalby/hub-cli create-app --name "My App" \
 
 # Isolated sub-wallet app
 npx @getalby/hub-cli create-app --name "Isolated App" --isolated --unlock-password YOUR_PASSWORD
+
+# Create a sub-wallet (isolated app with its own balance)
+npx @getalby/hub-cli create-sub-wallet --name "Alice"
 ```
 
 ## Command Reference
@@ -343,8 +346,9 @@ npx @getalby/hub-cli create-app --name "Isolated App" --isolated --unlock-passwo
 
 | Command      | Description                 | Required Options |
 | ------------ | --------------------------- | ---------------- |
-| `apps`       | List NWC app connections    | —                |
-| `create-app` | Create a new NWC connection | `--name`         |
+| `apps`             | List NWC app connections                        | —                |
+| `create-app`       | Create a new NWC connection                     | `--name`         |
+| `create-sub-wallet`| Create a sub-wallet (isolated app with balance) | `--name`         |
 
 ## Output
 
