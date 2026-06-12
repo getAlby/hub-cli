@@ -149,6 +149,7 @@ export interface App {
   isolated: boolean;
   /** @deprecated millisatoshi balance — use balanceSat. Isolated apps and sub-wallets only; 0 for shared-balance apps. */
   balance: number;
+  metadata?: Record<string, unknown>;
   /** App balance in satoshis. Non-zero only for isolated apps and sub-wallets; distinct from the hub wallet balance. */
   balanceSat: number;
   /** App balance in millisatoshis. */
@@ -168,6 +169,7 @@ export interface CreateAppRequest {
   expiresAt?: string;
   scopes: string[];
   isolated?: boolean;
+  metadata?: Record<string, unknown>;
   unlockPassword?: string;
 }
 
