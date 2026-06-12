@@ -12,10 +12,9 @@ const HUB_PORT = 18085;
 const HUB_URL = `http://localhost:${HUB_PORT}`;
 
 let hubProcess: ChildProcess;
-let workDir: string;
 
 beforeEach(async () => {
-  ({ hubProcess, workDir } = await spawnHub(HUB_PORT, "hub-cli-e2e-stop-"));
+  ({ hubProcess } = await spawnHub(HUB_PORT, "hub-cli-e2e-stop-"));
 
   // setup is a prerequisite for all stop tests
   const setup = runCommand([
@@ -111,7 +110,6 @@ test("stop fails without a token", { timeout: 60_000 }, async () => {
   const stop = runCommand(["--url", HUB_URL, "stop"]);
   expect(stop.status).toBe(1);
   const output = JSON.parse(stop.stdout);
-  expect(typeof output.error).toBe("string");
   expect(output.error).toEqual("missing or malformed jwt");
 });
 
@@ -140,7 +138,6 @@ test(
     const secondStop = runCommand(["--url", HUB_URL, "--token", token, "stop"]);
     expect(secondStop.status).toBe(1);
     const output = JSON.parse(secondStop.stdout);
-    expect(typeof output.error).toBe("string");
     expect(output.error).toEqual("LNClient not started");
   },
 );

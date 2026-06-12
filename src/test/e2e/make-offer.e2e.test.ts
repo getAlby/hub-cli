@@ -6,6 +6,7 @@ import {
   runCommand,
   killHub,
   bitcoinRpc,
+  waitForInfo,
   waitForBalances,
   waitForChannels,
 } from "./helpers";
@@ -78,6 +79,12 @@ beforeAll(async () => {
   if (startB.status !== 0)
     throw new Error(`Hub B start failed: ${startB.stderr}`);
   const tokenB = JSON.parse(startB.stdout).token;
+
+  // `start` returns as soon as the JWT is issued, but the LDK node boots
+  // asynchronously. Wait for both nodes to actually be running before issuing
+  // node commands like get-onchain-address (otherwise they race and fail).
+  await waitForInfo(HUB_A_URL, (info) => info.running);
+  await waitForInfo(HUB_B_URL, (info) => info.running);
 
   // Mine 101 blocks for coinbase maturity
   miningAddr = (await bitcoinRpc("getnewaddress")) as string;
@@ -174,6 +181,6 @@ test("make-offer returns a BOLT-12 offer string", { timeout: 30_000 }, async () 
   ]);
   expect(result.status).toBe(0);
   const offer = JSON.parse(result.stdout) as string;
-  expect(typeof offer).toBe("string");
-  expect(offer.startsWith("lno1")).toBe(true);
+  // BOLT-12 offers are bech32-style strings with the "lno1" prefix
+  expect(offer).toMatch(/^lno1[0-9a-z]+$/);
 });

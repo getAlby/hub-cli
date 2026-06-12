@@ -39,7 +39,7 @@ jobs:
 
       - name: Download Alby Hub binary
         run: |
-          curl -sL https://github.com/getAlby/hub/releases/download/v1.21.4/albyhub-Server-Linux-x86_64.tar.bz2 \
+          curl -sL https://github.com/getAlby/hub/releases/download/v1.23.0/albyhub-Server-Linux-x86_64.tar.bz2 \
             -o src/test/e2e/albyhub-Server-Linux-x86_64.tar.bz2
           mkdir -p src/test/e2e/albyhub-Server-Linux-x86_64
           tar -xjf src/test/e2e/albyhub-Server-Linux-x86_64.tar.bz2 -C src/test/e2e/albyhub-Server-Linux-x86_64

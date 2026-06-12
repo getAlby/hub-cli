@@ -6,10 +6,9 @@ const HUB_PORT = 18080; // non-default port to avoid clashing with a real hub
 const HUB_URL = `http://localhost:${HUB_PORT}`;
 
 let hubProcess: ChildProcess;
-let workDir: string;
 
 beforeEach(async () => {
-  ({ hubProcess, workDir } = await spawnHub(HUB_PORT, "hub-cli-e2e-"));
+  ({ hubProcess } = await spawnHub(HUB_PORT, "hub-cli-e2e-"));
 });
 
 afterEach(async () => {
@@ -28,7 +27,6 @@ test("cannot setup with an empty password", () => {
   ]);
   expect(result.status).toBe(1);
   const output = JSON.parse(result.stdout);
-  expect(typeof output.error).toBe("string");
   expect(output.error).toEqual(
     "Failed to setup node: no unlock password provided",
   );
@@ -123,6 +121,5 @@ test("cannot setup if node has ever been started", async () => {
   ]);
   expect(result.status).toBe(1);
   const output = JSON.parse(result.stdout);
-  expect(typeof output.error).toBe("string");
   expect(output.error).toEqual("Failed to setup node: setup already completed");
 });

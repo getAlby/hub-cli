@@ -61,5 +61,6 @@ test("sync queues a wallet sync", { timeout: 60_000 }, async () => {
   expect(result.status).toBe(0);
   const out = JSON.parse(result.stdout);
   expect(out.success).toBe(true);
-  expect(typeof out.message).toBe("string");
+  // e.g. "Wallet sync queued. May take up to a minute."
+  expect(out.message).toContain("sync queued");
 });

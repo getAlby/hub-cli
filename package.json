@@ -18,6 +18,7 @@
     "dev": "yarn build && node build/index.js",
     "test": "yarn build && vitest run --config vitest.config.ts",
     "test:e2e": "yarn build && vitest run --config vitest.config.e2e.ts",
+    "test:e2e:standalone": "yarn build && vitest run --config vitest.config.e2e-standalone.ts",
     "test:watch": "vitest"
   },
   "keywords": [
@@ -32,7 +33,6 @@
   "author": "Alby contributors",
   "license": "Apache-2.0",
   "dependencies": {
-    "@getalby/lightning-tools": "^7.0.2",
     "commander": "^13.1.0"
   },
   "devDependencies": {

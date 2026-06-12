@@ -6,16 +6,16 @@ import {
   runCommand,
   waitForInfo,
   killHub,
+  expectValidJwt,
 } from "./helpers";
 
 const HUB_PORT = 18082; // different port from setup.e2e.test.ts (18080) and start.e2e.test.ts (18081)
 const HUB_URL = `http://localhost:${HUB_PORT}`;
 
 let hubProcess: ChildProcess;
-let workDir: string;
 
 beforeEach(async () => {
-  ({ hubProcess, workDir } = await spawnHub(HUB_PORT, "hub-cli-e2e-unlock-"));
+  ({ hubProcess } = await spawnHub(HUB_PORT, "hub-cli-e2e-unlock-"));
   // No setup or start — test 1 needs a fresh hub
 });
 
@@ -33,9 +33,9 @@ test("unlock fails if node is not started", () => {
   ]);
   expect(result.status).toBe(1);
   const output = JSON.parse(result.stdout);
-  expect(typeof output.error).toBe("string");
-  // TODO: hub should return a better error message here
-  expect(output.error).toEqual("Failed to save session: config not unlocked");
+  expect(output.error).toEqual(
+    "Node is not running, start it before unlocking.",
+  );
 });
 
 test("unlock works if node is started", { timeout: 60_000 }, async () => {
@@ -73,8 +73,7 @@ test("unlock works if node is started", { timeout: 60_000 }, async () => {
   ]);
   expect(result.status).toBe(0);
   const output = JSON.parse(result.stdout);
-  expect(typeof output.token).toBe("string");
-  expect(output.token.length).toBeGreaterThan(0);
+  expectValidJwt(output.token);
 });
 
 test("rate limit on unlock", { timeout: 60_000 }, async () => {
@@ -112,7 +111,6 @@ test("rate limit on unlock", { timeout: 60_000 }, async () => {
   ]);
   expect(result.status).toBe(1);
   let output = JSON.parse(result.stdout);
-  expect(typeof output.error).toBe("string");
   expect(output.error).toEqual("Invalid password");
 
   result = runCommand([
@@ -124,6 +122,5 @@ test("rate limit on unlock", { timeout: 60_000 }, async () => {
   ]);
   expect(result.status).toBe(1);
   output = JSON.parse(result.stdout);
-  expect(typeof output.error).toBe("string");
   expect(output.error).toEqual("rate limit exceeded");
 });
