@@ -12,10 +12,10 @@ Download the Linux server build from the [Alby Hub GitHub releases](https://gith
 src/test/e2e/albyhub-Server-Linux-x86_64/
 ```
 
-For example, for `v1.22.2`:
+For example, for `v1.23.0`:
 
 ```bash
-curl -L https://github.com/getAlby/hub/releases/download/v1.22.2/albyhub-Server-Linux-x86_64.tar.bz2 \
+curl -L https://github.com/getAlby/hub/releases/download/v1.23.0/albyhub-Server-Linux-x86_64.tar.bz2 \
   -o src/test/e2e/albyhub-Server-Linux-x86_64.tar.bz2
 mkdir -p src/test/e2e/albyhub-Server-Linux-x86_64
 tar -xjf src/test/e2e/albyhub-Server-Linux-x86_64.tar.bz2 -C src/test/e2e/albyhub-Server-Linux-x86_64
