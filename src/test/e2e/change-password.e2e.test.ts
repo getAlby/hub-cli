@@ -6,6 +6,7 @@ import {
   runCommand,
   waitForInfo,
   killHub,
+  expectValidJwt,
 } from "./helpers";
 
 const HUB_PORT = 18088;
@@ -76,7 +77,6 @@ test(
     ]);
     expect(result.status).toBe(1);
     const out = JSON.parse(result.stdout);
-    expect(typeof out.error).toBe("string");
     expect(out.error).toEqual("Current password and confirmation do not match");
   },
 );
@@ -141,7 +141,7 @@ test(
     ]);
     expect(newStart.status).toBe(0);
     const newStartOut = JSON.parse(newStart.stdout);
-    expect(typeof newStartOut.token).toBe("string");
+    expectValidJwt(newStartOut.token);
 
     // avoid rate limit
     await new Promise((r) => setTimeout(r, 3000));
@@ -169,6 +169,6 @@ test(
     ]);
     expect(newUnlock.status).toBe(0);
     const newOut = JSON.parse(newUnlock.stdout);
-    expect(typeof newOut.token).toBe("string");
+    expectValidJwt(newOut.token);
   },
 );

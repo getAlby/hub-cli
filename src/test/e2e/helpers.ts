@@ -3,8 +3,35 @@ import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { expect } from "vitest";
 import type { ChildProcess } from "node:child_process";
 import type { BalancesResponse, Channel, InfoResponse } from "../../types.js";
+
+/**
+ * Asserts that `token` is a structurally valid Alby Hub auth token and returns
+ * its decoded payload. Hub tokens are HS256 JWTs of the form
+ * `header.payload.signature` whose payload carries the granted permission and an
+ * expiry, e.g. `{"permission":"full","exp":1783845050}`. This checks far more
+ * than "is a non-empty string" — it verifies the JWT shape, algorithm, the
+ * granted permission and a sane expiry.
+ */
+export function expectValidJwt(
+  token: unknown,
+  permission = "full",
+): { permission: string; exp: number } {
+  expect(typeof token).toBe("string");
+  const parts = (token as string).split(".");
+  expect(parts).toHaveLength(3);
+  const header = JSON.parse(Buffer.from(parts[0], "base64url").toString("utf8"));
+  expect(header).toMatchObject({ alg: "HS256", typ: "JWT" });
+  const payload = JSON.parse(
+    Buffer.from(parts[1], "base64url").toString("utf8"),
+  );
+  expect(payload.permission).toBe(permission);
+  expect(typeof payload.exp).toBe("number");
+  expect(payload.exp).toBeGreaterThan(0);
+  return payload;
+}
 
 export const E2E_DIR = fileURLToPath(new URL(".", import.meta.url));
 export const HUB_BINARY = join(
