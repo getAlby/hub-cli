@@ -12,10 +12,9 @@ const HUB_PORT = 18085;
 const HUB_URL = `http://localhost:${HUB_PORT}`;
 
 let hubProcess: ChildProcess;
-let workDir: string;
 
 beforeEach(async () => {
-  ({ hubProcess, workDir } = await spawnHub(HUB_PORT, "hub-cli-e2e-stop-"));
+  ({ hubProcess } = await spawnHub(HUB_PORT, "hub-cli-e2e-stop-"));
 
   // setup is a prerequisite for all stop tests
   const setup = runCommand([

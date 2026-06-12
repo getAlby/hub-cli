@@ -6,10 +6,9 @@ const HUB_PORT = 18080; // non-default port to avoid clashing with a real hub
 const HUB_URL = `http://localhost:${HUB_PORT}`;
 
 let hubProcess: ChildProcess;
-let workDir: string;
 
 beforeEach(async () => {
-  ({ hubProcess, workDir } = await spawnHub(HUB_PORT, "hub-cli-e2e-"));
+  ({ hubProcess } = await spawnHub(HUB_PORT, "hub-cli-e2e-"));
 });
 
 afterEach(async () => {

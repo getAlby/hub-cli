@@ -13,10 +13,9 @@ const HUB_PORT = 18081; // different port from setup.e2e.test.ts (18080)
 const HUB_URL = `http://localhost:${HUB_PORT}`;
 
 let hubProcess: ChildProcess;
-let workDir: string;
 
 beforeEach(async () => {
-  ({ hubProcess, workDir } = await spawnHub(HUB_PORT, "hub-cli-e2e-start-"));
+  ({ hubProcess } = await spawnHub(HUB_PORT, "hub-cli-e2e-start-"));
 
   // setup is a prerequisite for all start tests
   const setup = runCommand([
