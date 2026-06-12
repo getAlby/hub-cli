@@ -112,6 +112,7 @@ described above (Polar or headless). It is needed by every suite.
 | `get-info.e2e.test.ts` | Hub binary + bitcoind | Hub status / version / config |
 | `list-apps.e2e.test.ts` | Hub binary + bitcoind | List NWC app connections |
 | `create-app.e2e.test.ts` | Hub binary + bitcoind | Create NWC app (default, scoped/budgeted, isolated) |
+| `create-sub-wallet.e2e.test.ts` | Hub binary + bitcoind | Create isolated "uncle-jim" sub-wallet (default + custom scopes/budget) |
 | `lookup-transaction.e2e.test.ts` | Hub binary + bitcoind | Look up an invoice by payment hash + not-found error |
 | `connect-alby-account.e2e.test.ts` | Hub binary + bitcoind | Returns auth URL when no account is linked |
 | `request-alby-lsp-channel-offer.e2e.test.ts` | Hub binary + bitcoind | Errors when no Alby account is linked |

@@ -148,6 +148,7 @@ export interface App {
   budgetRenewal: string;
   isolated: boolean;
   balance: number;
+  metadata?: Record<string, unknown>;
 }
 
 export interface ListAppsResponse {
