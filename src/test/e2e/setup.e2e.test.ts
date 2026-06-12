@@ -28,7 +28,6 @@ test("cannot setup with an empty password", () => {
   ]);
   expect(result.status).toBe(1);
   const output = JSON.parse(result.stdout);
-  expect(typeof output.error).toBe("string");
   expect(output.error).toEqual(
     "Failed to setup node: no unlock password provided",
   );
@@ -123,6 +122,5 @@ test("cannot setup if node has ever been started", async () => {
   ]);
   expect(result.status).toBe(1);
   const output = JSON.parse(result.stdout);
-  expect(typeof output.error).toBe("string");
   expect(output.error).toEqual("Failed to setup node: setup already completed");
 });

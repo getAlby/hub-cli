@@ -130,8 +130,8 @@ test("deposits on-chain funds to hub A", { timeout: 120_000 }, async () => {
   ]);
   expect(addrResult.status).toBe(0);
   const { address } = JSON.parse(addrResult.stdout);
-  expect(typeof address).toBe("string");
-  expect(address.length).toBeGreaterThan(0);
+  // regtest on-chain addresses are native segwit with the "bcrt1" HRP
+  expect(address).toMatch(/^bcrt1[0-9a-z]+$/);
 
   await bitcoinRpc("sendtoaddress", [address, 0.1]);
 
@@ -249,8 +249,8 @@ test("opens channel from hub A to hub B", { timeout: 120_000 }, async () => {
   ]);
   expect(openResult.status).toBe(0);
   const openOutput = JSON.parse(openResult.stdout);
-  expect(typeof openOutput.fundingTxId).toBe("string");
-  expect(openOutput.fundingTxId.length).toBeGreaterThan(0);
+  // funding tx id is a bitcoin txid (32 bytes, 64 lowercase hex chars)
+  expect(openOutput.fundingTxId).toMatch(/^[0-9a-f]{64}$/);
 
   await bitcoinRpc("generatetoaddress", [6, miningAddr]);
 
@@ -285,11 +285,11 @@ test("opens channel from hub A to hub B", { timeout: 120_000 }, async () => {
   ]);
   expect(listChAResult.status).toBe(0);
   const listChA = JSON.parse(listChAResult.stdout) as Channel[];
-  expect(Array.isArray(listChA)).toBe(true);
   const activeChA = listChA.find(
     (c) => c.remotePubkey === hubBConnInfo.pubkey && c.active,
   );
   expect(activeChA).toBeDefined();
+  expect(activeChA!.fundingTxId).toBe(openOutput.fundingTxId);
 
   // Hub B: list-channels via CLI and verify at least one active channel
   const listChBResult = runCommand([
@@ -301,7 +301,6 @@ test("opens channel from hub A to hub B", { timeout: 120_000 }, async () => {
   ]);
   expect(listChBResult.status).toBe(0);
   const listChB = JSON.parse(listChBResult.stdout) as Channel[];
-  expect(Array.isArray(listChB)).toBe(true);
   expect(listChB.some((c) => c.active)).toBe(true);
 
   // Hub A: get-health post-channel
@@ -334,7 +333,8 @@ test("sends sats from hub A to hub B", { timeout: 120_000 }, async () => {
   ]);
   expect(invoiceResult.status).toBe(0);
   const invoiceData = JSON.parse(invoiceResult.stdout) as { invoice: string };
-  expect(typeof invoiceData.invoice).toBe("string");
+  // regtest BOLT-11 invoices use the "lnbcrt" human-readable prefix
+  expect(invoiceData.invoice).toMatch(/^lnbcrt[0-9a-z]+$/);
 
   // Record Hub A's balance before payment
   const balancesBeforeResult = runCommand([
@@ -412,7 +412,8 @@ test("sends sats from hub B back to hub A", { timeout: 120_000 }, async () => {
   ]);
   expect(invoiceResult.status).toBe(0);
   const invoiceData = JSON.parse(invoiceResult.stdout) as { invoice: string };
-  expect(typeof invoiceData.invoice).toBe("string");
+  // regtest BOLT-11 invoices use the "lnbcrt" human-readable prefix
+  expect(invoiceData.invoice).toMatch(/^lnbcrt[0-9a-z]+$/);
 
   // Record Hub A's balance before payment
   const hubABalancesBeforeResult = runCommand([

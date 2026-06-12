@@ -1,6 +1,13 @@
 import { test, expect, beforeEach, afterEach } from "vitest";
 import type { ChildProcess } from "node:child_process";
-import { TEST_PASSWORD, spawnHub, runCommand, waitForInfo, killHub } from "./helpers";
+import {
+  TEST_PASSWORD,
+  spawnHub,
+  runCommand,
+  waitForInfo,
+  killHub,
+  expectValidJwt,
+} from "./helpers";
 
 const HUB_PORT = 18081; // different port from setup.e2e.test.ts (18080)
 const HUB_URL = `http://localhost:${HUB_PORT}`;
@@ -38,7 +45,6 @@ test("cannot start with wrong unlock password", () => {
   ]);
   expect(result.status).toBe(1);
   const output = JSON.parse(result.stdout);
-  expect(typeof output.error).toBe("string");
   expect(output.error).toEqual("Invalid password");
 });
 
@@ -52,8 +58,7 @@ test("start returns a JWT token", { timeout: 60_000 }, async () => {
   ]);
   expect(result.status).toBe(0);
   const output = JSON.parse(result.stdout);
-  expect(typeof output.token).toBe("string");
-  expect(output.token.length).toBeGreaterThan(0);
+  expectValidJwt(output.token);
   const info = await waitForInfo(HUB_URL, (i) => i.running);
   expect(info.running).toBe(true);
 });
@@ -68,7 +73,6 @@ test("rate limit on start", { timeout: 60_000 }, () => {
   ]);
   expect(result.status).toBe(1);
   let output = JSON.parse(result.stdout);
-  expect(typeof output.error).toBe("string");
   expect(output.error).toEqual("Invalid password");
   result = runCommand([
     "--url",
@@ -79,7 +83,6 @@ test("rate limit on start", { timeout: 60_000 }, () => {
   ]);
   expect(result.status).toBe(1);
   output = JSON.parse(result.stdout);
-  expect(typeof output.error).toBe("string");
   expect(output.error).toEqual("rate limit exceeded");
 });
 

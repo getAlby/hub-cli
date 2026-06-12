@@ -55,5 +55,7 @@ test("get-info reports a running, set-up hub", () => {
   expect(info.running).toBe(true);
   expect(info.network).toBe(NETWORK);
   expect(info.backendType).toBe("LDK");
-  expect(typeof info.version).toBe("string");
+  // a released hub reports a semver tag like "v1.23.0"; dev builds may differ,
+  // so match the shape rather than pinning an exact version
+  expect(info.version).toMatch(/^v?\d+\.\d+\.\d+/);
 });

@@ -56,5 +56,19 @@ test("get-channel-suggestions returns a list of LSP providers", () => {
   ]);
   expect(result.status).toBe(0);
   const suggestions = JSON.parse(result.stdout) as ChannelPeerSuggestion[];
-  expect(Array.isArray(suggestions)).toBe(true);
+  expect(suggestions.length).toBeGreaterThan(0);
+
+  // Megalith is a long-standing default suggestion — assert it is present and
+  // well-formed rather than just checking the value is an array.
+  const megalith = suggestions.find((s) => /megalith/i.test(s.name));
+  expect(megalith).toBeDefined();
+  // node pubkey is a 33-byte compressed secp256k1 key (66 lowercase hex chars)
+  expect(megalith!.pubkey).toMatch(/^[0-9a-f]{66}$/);
+  expect(megalith!.name).toContain("Megalith");
+
+  // every suggestion should carry a usable pubkey and payment method
+  for (const s of suggestions) {
+    expect(s.pubkey).toMatch(/^[0-9a-f]{66}$/);
+    expect(["lightning", "onchain"]).toContain(s.paymentMethod);
+  }
 });

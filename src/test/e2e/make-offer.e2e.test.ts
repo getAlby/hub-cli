@@ -174,6 +174,6 @@ test("make-offer returns a BOLT-12 offer string", { timeout: 30_000 }, async () 
   ]);
   expect(result.status).toBe(0);
   const offer = JSON.parse(result.stdout) as string;
-  expect(typeof offer).toBe("string");
-  expect(offer.startsWith("lno1")).toBe(true);
+  // BOLT-12 offers are bech32-style strings with the "lno1" prefix
+  expect(offer).toMatch(/^lno1[0-9a-z]+$/);
 });

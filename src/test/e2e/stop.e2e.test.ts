@@ -111,7 +111,6 @@ test("stop fails without a token", { timeout: 60_000 }, async () => {
   const stop = runCommand(["--url", HUB_URL, "stop"]);
   expect(stop.status).toBe(1);
   const output = JSON.parse(stop.stdout);
-  expect(typeof output.error).toBe("string");
   expect(output.error).toEqual("missing or malformed jwt");
 });
 
@@ -140,7 +139,6 @@ test(
     const secondStop = runCommand(["--url", HUB_URL, "--token", token, "stop"]);
     expect(secondStop.status).toBe(1);
     const output = JSON.parse(secondStop.stdout);
-    expect(typeof output.error).toBe("string");
     expect(output.error).toEqual("LNClient not started");
   },
 );

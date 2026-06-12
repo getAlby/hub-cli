@@ -6,6 +6,7 @@ import {
   runCommand,
   waitForInfo,
   killHub,
+  expectValidJwt,
 } from "./helpers";
 
 const HUB_PORT = 18082; // different port from setup.e2e.test.ts (18080) and start.e2e.test.ts (18081)
@@ -33,7 +34,6 @@ test("unlock fails if node is not started", () => {
   ]);
   expect(result.status).toBe(1);
   const output = JSON.parse(result.stdout);
-  expect(typeof output.error).toBe("string");
   expect(output.error).toEqual(
     "Node is not running, start it before unlocking.",
   );
@@ -74,8 +74,7 @@ test("unlock works if node is started", { timeout: 60_000 }, async () => {
   ]);
   expect(result.status).toBe(0);
   const output = JSON.parse(result.stdout);
-  expect(typeof output.token).toBe("string");
-  expect(output.token.length).toBeGreaterThan(0);
+  expectValidJwt(output.token);
 });
 
 test("rate limit on unlock", { timeout: 60_000 }, async () => {
@@ -113,7 +112,6 @@ test("rate limit on unlock", { timeout: 60_000 }, async () => {
   ]);
   expect(result.status).toBe(1);
   let output = JSON.parse(result.stdout);
-  expect(typeof output.error).toBe("string");
   expect(output.error).toEqual("Invalid password");
 
   result = runCommand([
@@ -125,6 +123,5 @@ test("rate limit on unlock", { timeout: 60_000 }, async () => {
   ]);
   expect(result.status).toBe(1);
   output = JSON.parse(result.stdout);
-  expect(typeof output.error).toBe("string");
   expect(output.error).toEqual("rate limit exceeded");
 });

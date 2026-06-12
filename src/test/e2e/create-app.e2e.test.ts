@@ -60,9 +60,15 @@ test("create-app creates a connection that then appears in list-apps", () => {
   expect(create.status).toBe(0);
   const app = JSON.parse(create.stdout) as CreateAppResponse;
   expect(app.name).toBe(appName);
-  expect(typeof app.id).toBe("number");
-  expect(app.pairingUri.startsWith("nostr+walletconnect://")).toBe(true);
-  expect(typeof app.walletPubkey).toBe("string");
+  expect(app.id).toBeGreaterThan(0);
+  // walletPubkey is a 32-byte nostr key (64 lowercase hex chars)
+  expect(app.walletPubkey).toMatch(/^[0-9a-f]{64}$/);
+  // the pairing URI is the NWC connection string keyed on that wallet pubkey
+  expect(app.pairingUri).toContain(
+    `nostr+walletconnect://${app.walletPubkey}?`,
+  );
+  expect(app.pairingUri).toContain("relay=");
+  expect(app.pairingUri).toContain("secret=");
 
   const list = runCommand(["--url", HUB_URL, "--token", token, "list-apps"]);
   expect(list.status).toBe(0);

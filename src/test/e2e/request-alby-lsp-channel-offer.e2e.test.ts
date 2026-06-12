@@ -55,6 +55,9 @@ test("request-alby-lsp-channel-offer errors without a linked Alby account", () =
   ]);
   expect(result.status).toBe(1);
   const out = JSON.parse(result.stdout);
-  expect(typeof out.error).toBe("string");
-  expect(out.error.length).toBeGreaterThan(0);
+  // With no linked account the hub still tries to reach the Alby LSP endpoint
+  // and fails on the missing OAuth token, e.g.
+  // `Get "https://api.getalby.com/internal/lsp": oauth2: token expired ...`
+  expect(out.error).toContain("api.getalby.com/internal/lsp");
+  expect(out.error).toContain("oauth2");
 });

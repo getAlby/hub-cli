@@ -63,8 +63,8 @@ test("lookup-transaction finds an invoice created with make-invoice", () => {
   const invoice = JSON.parse(make.stdout) as Transaction & {
     amountSat: number;
   };
-  expect(typeof invoice.paymentHash).toBe("string");
-  expect(invoice.paymentHash.length).toBeGreaterThan(0);
+  // payment hash is the 32-byte SHA-256 of the preimage (64 lowercase hex)
+  expect(invoice.paymentHash).toMatch(/^[0-9a-f]{64}$/);
 
   const lookup = runCommand([
     "--url",
@@ -95,6 +95,5 @@ test("lookup-transaction errors for an unknown payment hash", () => {
   ]);
   expect(result.status).toBe(1);
   const out = JSON.parse(result.stdout);
-  expect(typeof out.error).toBe("string");
-  expect(out.error.length).toBeGreaterThan(0);
+  expect(out.error).toEqual("The transaction requested was not found");
 });

@@ -46,11 +46,30 @@ afterAll(async () => {
   if (hubProcess) await killHub(hubProcess);
 });
 
-test("list-apps returns an apps array and total count", () => {
+test("list-apps returns a freshly created app", () => {
+  const create = runCommand([
+    "--url",
+    HUB_URL,
+    "--token",
+    token,
+    "create-app",
+    "--name",
+    "e2e-list-apps-target",
+  ]);
+  if (create.status !== 0) throw new Error(`create-app failed: ${create.stderr}`);
+  const created = JSON.parse(create.stdout);
+
   const result = runCommand(["--url", HUB_URL, "--token", token, "list-apps"]);
   expect(result.status).toBe(0);
   const out = JSON.parse(result.stdout) as ListAppsResponse;
-  expect(Array.isArray(out.apps)).toBe(true);
-  expect(typeof out.totalCount).toBe("number");
+
+  // totalCount must agree with the returned page of apps
   expect(out.totalCount).toBe(out.apps.length);
+  expect(out.totalCount).toBeGreaterThanOrEqual(1);
+
+  // the app we just created must be present with matching identifiers
+  const app = out.apps.find((a) => a.name === "e2e-list-apps-target");
+  expect(app).toBeDefined();
+  expect(app!.id).toBe(created.id);
+  expect(app!.appPubkey).toMatch(/^[0-9a-f]{64}$/);
 });

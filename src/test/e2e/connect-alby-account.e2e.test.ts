@@ -61,6 +61,12 @@ test("connect-alby-account (no code) returns an auth URL when unconnected", () =
   };
   // Hub has no linked account, so we expect the "not connected" branch.
   expect(out.albyAccountConnected).toBeUndefined();
-  expect(typeof out.message).toBe("string");
-  expect(typeof out.albyAuthUrl).toBe("string");
+  // the auth URL is the Alby OAuth authorize endpoint; client_id varies, so
+  // assert the stable parts of the URL rather than the whole string
+  expect(out.albyAuthUrl).toMatch(/^https:\/\/getalby\.com\/oauth\?/);
+  expect(out.albyAuthUrl).toContain("response_type=code");
+  expect(out.albyAuthUrl).toContain("client_id=");
+  // the message tells the user to open that URL and re-run with --code
+  expect(out.message).toContain("albyAuthUrl");
+  expect(out.message).toContain("--code");
 });
