@@ -18,8 +18,24 @@ export class HubClient {
     return h;
   }
 
+  private async fetch(path: string, init: RequestInit): Promise<Response> {
+    try {
+      return await fetch(`${this.baseUrl}${path}`, init);
+    } catch (error) {
+      // Node's fetch throws a TypeError with message "fetch failed" when it
+      // can't reach the server at all (connection refused, DNS, etc.). Only in
+      // that case do we add the hint; other errors are rethrown unchanged.
+      if (error instanceof TypeError && error.message === "fetch failed") {
+        throw new Error(
+          `${error.message} - are you sure the hub is running on ${this.baseUrl}?`,
+        );
+      }
+      throw error;
+    }
+  }
+
   async get<T>(path: string): Promise<T> {
-    const res = await fetch(`${this.baseUrl}${path}`, {
+    const res = await this.fetch(path, {
       method: "GET",
       headers: this.headers(),
     });
@@ -27,7 +43,7 @@ export class HubClient {
   }
 
   async post<T>(path: string, body?: unknown): Promise<T> {
-    const res = await fetch(`${this.baseUrl}${path}`, {
+    const res = await this.fetch(path, {
       method: "POST",
       headers: this.headers(),
       body: body !== undefined ? JSON.stringify(body) : undefined,
@@ -36,7 +52,7 @@ export class HubClient {
   }
 
   async patch<T>(path: string, body?: unknown): Promise<T> {
-    const res = await fetch(`${this.baseUrl}${path}`, {
+    const res = await this.fetch(path, {
       method: "PATCH",
       headers: this.headers(),
       body: body !== undefined ? JSON.stringify(body) : undefined,
@@ -45,7 +61,7 @@ export class HubClient {
   }
 
   async delete<T>(path: string): Promise<T> {
-    const res = await fetch(`${this.baseUrl}${path}`, {
+    const res = await this.fetch(path, {
       method: "DELETE",
       headers: this.headers(),
     });
