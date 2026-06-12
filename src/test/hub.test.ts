@@ -12,6 +12,16 @@ test("shows help when run with no arguments", () => {
   expect(output).toContain("info");
   expect(output).toContain("balances");
   expect(output).toContain("channels");
+  expect(output).toContain("list-apps");
+});
+
+test("list-apps help documents the --name filter", () => {
+  const result = spawnSync("node", ["build/index.js", "list-apps", "--help"], {
+    encoding: "utf-8",
+    cwd: process.cwd(),
+  });
+  const output = result.stdout + result.stderr;
+  expect(output).toContain("--name");
 });
 
 test("hints that the hub may not be running when fetch fails", () => {

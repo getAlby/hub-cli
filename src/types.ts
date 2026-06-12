@@ -147,8 +147,13 @@ export interface App {
   budgetUsage: number;
   budgetRenewal: string;
   isolated: boolean;
+  /** @deprecated millisatoshi balance — use balanceSat. Isolated apps and sub-wallets only; 0 for shared-balance apps. */
   balance: number;
   metadata?: Record<string, unknown>;
+  /** App balance in satoshis. Non-zero only for isolated apps and sub-wallets; distinct from the hub wallet balance. */
+  balanceSat: number;
+  /** App balance in millisatoshis. */
+  balanceMsat: number;
 }
 
 export interface ListAppsResponse {

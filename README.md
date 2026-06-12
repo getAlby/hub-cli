@@ -67,7 +67,7 @@ You can also pass the token via environment variable instead of `--save`:
 
 ```bash
 export HUB_TOKEN="eyJ..."
-npx @getalby/hub-cli balances
+npx @getalby/hub-cli get-balances
 ```
 
 **Token storage locations:**
@@ -259,7 +259,10 @@ npx @getalby/hub-cli lookup-transaction <paymentHash>
 
 ```bash
 # List NWC app connections
-npx @getalby/hub-cli apps
+npx @getalby/hub-cli list-apps
+
+# Look up a single app by name (prefix match) — the response includes its balance
+npx @getalby/hub-cli list-apps --name "My App"
 
 # Create a new NWC connection
 npx @getalby/hub-cli create-app --name "My App"
@@ -344,11 +347,11 @@ npx @getalby/hub-cli create-sub-wallet --name "Alice"
 
 ### NWC Apps
 
-| Command      | Description                 | Required Options |
-| ------------ | --------------------------- | ---------------- |
-| `apps`             | List NWC app connections                        | —                |
-| `create-app`       | Create a new NWC connection                     | `--name`         |
-| `create-sub-wallet`| Create a sub-wallet (isolated app with balance) | `--name`         |
+| Command             | Description                                      | Required Options |
+| ------------------- | ------------------------------------------------ | ---------------- |
+| `list-apps`         | List NWC app connections (filter with `--name`)  | —                |
+| `create-app`        | Create a new NWC connection                      | `--name`         |
+| `create-sub-wallet` | Create a sub-wallet (isolated app with balance)  | `--name`         |
 
 ## Output
 
