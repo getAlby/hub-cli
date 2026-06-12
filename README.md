@@ -232,9 +232,6 @@ npx @getalby/hub-cli pay-invoice lnbc...
 # Pay a zero-amount invoice, specifying the amount
 npx @getalby/hub-cli pay-invoice lnbc... --amount 1000
 
-# Pay a lightning address (user@domain), amount in satoshis
-npx @getalby/hub-cli pay-lightning-address user@domain.com --amount 1000
-
 # Create an invoice
 npx @getalby/hub-cli make-invoice --amount 1000 --description "test"
 
@@ -334,7 +331,6 @@ npx @getalby/hub-cli create-sub-wallet --name "Alice"
 | Command                   | Description                      | Required Options              |
 | ------------------------- | -------------------------------- | ----------------------------- |
 | `pay-invoice`             | Pay a BOLT11 invoice             | `<invoice>` (argument)        |
-| `pay-lightning-address`   | Pay a lightning address          | `<address>` (argument), `--amount` |
 | `make-invoice`            | Create a BOLT11 invoice          | `--amount`                    |
 | `make-offer`              | Create a BOLT-12 offer           | —                             |
 
