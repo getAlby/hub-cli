@@ -33,6 +33,9 @@ import { registerChangePasswordCommand } from "./commands/change-password.js";
 import { registerConnectAlbyAccountCommand } from "./commands/connect-alby-account.js";
 import { registerListCustomNodeCommandsCommand } from "./commands/list-custom-node-commands.js";
 import { registerExecuteCustomNodeCommandCommand } from "./commands/execute-custom-node-command.js";
+import { registerGetAlbyAccountCommand } from "./commands/get-alby-account.js";
+import { registerGetAlbyStatusCommand } from "./commands/get-alby-status.js";
+import { registerLinkAlbyAccountCommand } from "./commands/link-alby-account.js";
 
 const program = new Command();
 
@@ -43,7 +46,7 @@ program
   .option(
     "-u, --url <url>",
     "Hub URL",
-    process.env.HUB_URL ?? "http://localhost:8080",
+    process.env.HUB_URL ?? "http://localhost:8029",
   )
   .option("-t, --token <jwt>", "JWT token (or set HUB_TOKEN env)");
 
@@ -79,5 +82,8 @@ registerChangePasswordCommand(program);
 registerConnectAlbyAccountCommand(program);
 registerListCustomNodeCommandsCommand(program);
 registerExecuteCustomNodeCommandCommand(program);
+registerGetAlbyAccountCommand(program);
+registerGetAlbyStatusCommand(program);
+registerLinkAlbyAccountCommand(program);
 
 program.parse();

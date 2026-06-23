@@ -13,7 +13,7 @@ npx @getalby/hub-cli [options] <command>
 **Global options:**
 
 ```
--u, --url <url>     Hub URL (default: http://localhost:8080 or HUB_URL env)
+-u, --url <url>     Hub URL (default: http://localhost:8029 or HUB_URL env)
 -t, --token <jwt>   JWT token (or set HUB_TOKEN env)
 ```
 
@@ -343,7 +343,7 @@ npx @getalby/hub-cli create-sub-wallet --name "Alice"
 | `change-password`      | Change the hub unlock password                                      | `--current-password`, `--confirm-current-password`, `--new-password` |
 | `connect-alby-account` | Connect your Alby account (returns auth URL or confirms connection) | `--code` (optional, step 2)                                          |
 
-### Debug Tools
+### Custom Node Commands
 
 | Command                       | Description                                              | Required Options       |
 | ----------------------------- | -------------------------------------------------------- | ---------------------- |

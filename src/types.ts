@@ -26,6 +26,43 @@ export interface InfoResponse {
   relays: Array<{ url: string; online: boolean }>;
 }
 
+// GET /api/alby/me — the connected Alby account (mirrors hub/alby/models.go AlbyMe)
+export interface AlbyMe {
+  identifier: string;
+  nostr_pubkey: string;
+  lightning_address: string;
+  email: string;
+  name: string;
+  avatar: string;
+  keysend_pubkey: string;
+  shared_node: boolean;
+  hub: {
+    name: string;
+    config: Record<string, unknown>;
+  };
+  subscription: {
+    plan_code: string;
+  };
+}
+
+// GET /api/alby/info — Alby service status (mirrors hub/alby/models.go AlbyInfo)
+export interface AlbyInfo {
+  hub: {
+    latestVersion: string;
+    latestReleaseNotes: string;
+  };
+  status: string;
+  healthy: boolean;
+  accountAvailable: boolean;
+  incidents: Array<{
+    name: string;
+    started: string;
+    status: string;
+    impact: string;
+    url: string;
+  }>;
+}
+
 export interface LightningBalanceResponse {
   totalSpendableSat: number;
   totalReceivableSat: number;
