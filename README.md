@@ -13,7 +13,7 @@ npx @getalby/hub-cli [options] <command>
 **Global options:**
 
 ```
--u, --url <url>     Hub URL (default: http://localhost:8080 or HUB_URL env)
+-u, --url <url>     Hub URL (default: http://localhost:8029 or HUB_URL env)
 -t, --token <jwt>   JWT token (or set HUB_TOKEN env)
 ```
 
@@ -318,21 +318,21 @@ npx @getalby/hub-cli create-sub-wallet --name "Alice"
 
 ### Node Management
 
-| Command           | Description                                         | Required Options                                                      |
-| ----------------- | --------------------------------------------------- | --------------------------------------------------------------------- |
-| `stop`                   | Stop the Lightning node (HTTP server keeps running)  | —                                                                    |
-| `sync`                   | Trigger a wallet sync                                | —                                                                    |
-| `backup`                 | Export wallet recovery phrase to a file              | `--password`                                                         |
-| `change-password`        | Change the hub unlock password                       | `--current-password`, `--confirm-current-password`, `--new-password` |
-| `connect-alby-account`   | Connect your Alby account (returns auth URL or confirms connection) | `--code` (optional, step 2)                         |
+| Command                | Description                                                         | Required Options                                                     |
+| ---------------------- | ------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| `stop`                 | Stop the Lightning node (HTTP server keeps running)                 | —                                                                    |
+| `sync`                 | Trigger a wallet sync                                               | —                                                                    |
+| `backup`               | Export wallet recovery phrase to a file                             | `--password`                                                         |
+| `change-password`      | Change the hub unlock password                                      | `--current-password`, `--confirm-current-password`, `--new-password` |
+| `connect-alby-account` | Connect your Alby account (returns auth URL or confirms connection) | `--code` (optional, step 2)                                          |
 
 ### Payments
 
-| Command                   | Description                      | Required Options              |
-| ------------------------- | -------------------------------- | ----------------------------- |
-| `pay-invoice`             | Pay a BOLT11 invoice             | `<invoice>` (argument)        |
-| `make-invoice`            | Create a BOLT11 invoice          | `--amount`                    |
-| `make-offer`              | Create a BOLT-12 offer           | —                             |
+| Command        | Description             | Required Options       |
+| -------------- | ----------------------- | ---------------------- |
+| `pay-invoice`  | Pay a BOLT11 invoice    | `<invoice>` (argument) |
+| `make-invoice` | Create a BOLT11 invoice | `--amount`             |
+| `make-offer`   | Create a BOLT-12 offer  | —                      |
 
 ### Transactions
 
@@ -343,11 +343,11 @@ npx @getalby/hub-cli create-sub-wallet --name "Alice"
 
 ### NWC Apps
 
-| Command             | Description                                      | Required Options |
-| ------------------- | ------------------------------------------------ | ---------------- |
-| `list-apps`         | List NWC app connections (filter with `--name`)  | —                |
-| `create-app`        | Create a new NWC connection                      | `--name`         |
-| `create-sub-wallet` | Create a sub-wallet (isolated app with balance)  | `--name`         |
+| Command             | Description                                     | Required Options |
+| ------------------- | ----------------------------------------------- | ---------------- |
+| `list-apps`         | List NWC app connections (filter with `--name`) | —                |
+| `create-app`        | Create a new NWC connection                     | `--name`         |
+| `create-sub-wallet` | Create a sub-wallet (isolated app with balance) | `--name`         |
 
 ## Output
 
