@@ -31,13 +31,15 @@ import { registerSyncCommand } from "./commands/sync.js";
 import { registerBackupMnemonicCommand } from "./commands/backup-mnemonic.js";
 import { registerChangePasswordCommand } from "./commands/change-password.js";
 import { registerConnectAlbyAccountCommand } from "./commands/connect-alby-account.js";
+import { registerListCustomNodeCommandsCommand } from "./commands/list-custom-node-commands.js";
+import { registerExecuteCustomNodeCommandCommand } from "./commands/execute-custom-node-command.js";
 
 const program = new Command();
 
 program
   .name("hub-cli")
   .description("CLI for managing Alby Hub - a self-custodial Lightning node")
-  .version("0.5.0")
+  .version("0.6.0")
   .option(
     "-u, --url <url>",
     "Hub URL",
@@ -75,5 +77,7 @@ registerSyncCommand(program);
 registerBackupMnemonicCommand(program);
 registerChangePasswordCommand(program);
 registerConnectAlbyAccountCommand(program);
+registerListCustomNodeCommandsCommand(program);
+registerExecuteCustomNodeCommandCommand(program);
 
 program.parse();
