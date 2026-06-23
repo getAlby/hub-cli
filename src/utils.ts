@@ -54,7 +54,7 @@ export function getClient(program: Command): HubClient {
 
   // Resolve URL: explicit flag/env > alby-cloud.txt default > localhost default
   let url = opts.url.replace(/\/$/, "");
-  const usingDefaultUrl = url === "http://localhost:8080";
+  const usingDefaultUrl = url === "http://localhost:8029";
   if (usingDefaultUrl && albyCloud) {
     url = "https://my.albyhub.com";
   }
@@ -86,9 +86,10 @@ export function getClient(program: Command): HubClient {
   return new HubClient(url, token, extraHeaders);
 }
 
-export function mapTransaction(
-  tx: Transaction,
-): Omit<Transaction, "amount" | "feesPaid"> & {
+export function mapTransaction(tx: Transaction): Omit<
+  Transaction,
+  "amount" | "feesPaid"
+> & {
   amountSat: number;
   feesPaidSat: number;
 } {
