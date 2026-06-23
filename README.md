@@ -223,6 +223,23 @@ npx @getalby/hub-cli connect-alby-account
 npx @getalby/hub-cli connect-alby-account --code YOUR_AUTH_CODE
 ```
 
+### Custom Node Commands
+
+Custom node (debug) commands are backend-specific. Use `list-custom-node-commands` to
+discover what the active backend exposes, then run one with `execute-custom-node-command`.
+
+```bash
+# List the custom node commands the active backend supports
+npx @getalby/hub-cli list-custom-node-commands
+
+# Execute a command (pass the full command line as one quoted string).
+# Example (Bark): dump balance breakdown, VTXOs and pending receives
+npx @getalby/hub-cli execute-custom-node-command "debug"
+
+# Example (LDK): pay a BOLT-12 offer (testing only)
+npx @getalby/hub-cli execute-custom-node-command "pay_bolt12_offer --offer lno... --amount 1000"
+```
+
 ### Payments
 
 ```bash
@@ -325,6 +342,13 @@ npx @getalby/hub-cli create-sub-wallet --name "Alice"
 | `backup`               | Export wallet recovery phrase to a file                             | `--password`                                                         |
 | `change-password`      | Change the hub unlock password                                      | `--current-password`, `--confirm-current-password`, `--new-password` |
 | `connect-alby-account` | Connect your Alby account (returns auth URL or confirms connection) | `--code` (optional, step 2)                                          |
+
+### Custom Node Commands
+
+| Command                       | Description                                              | Required Options       |
+| ----------------------------- | -------------------------------------------------------- | ---------------------- |
+| `list-custom-node-commands`   | List custom node (debug) commands for the active backend | —                      |
+| `execute-custom-node-command` | Execute a custom node (debug) command                    | `<command>` (argument) |
 
 ### Payments
 

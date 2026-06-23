@@ -247,3 +247,18 @@ export interface HealthAlarm {
 export interface HealthResponse {
   alarms?: HealthAlarm[];
 }
+
+export interface CustomNodeCommandArgDef {
+  name: string;
+  description: string;
+}
+
+export interface CustomNodeCommandDef {
+  name: string;
+  description: string;
+  args: CustomNodeCommandArgDef[];
+}
+
+export interface CustomNodeCommandsResponse {
+  commands: CustomNodeCommandDef[];
+}
