@@ -63,15 +63,19 @@ test("list-custom-node-commands returns the backend's custom commands", () => {
 });
 
 test("execute-custom-node-command runs a command on the backend", () => {
+  // list_channel_monitor_sizes is safe to run on a fresh node: it returns an
+  // empty array when there are no channels. (export_pathfinding_scores errors
+  // until the node has built up a network graph, so it is not used here.)
   const result = runCommand([
     "--url",
     HUB_URL,
     "--token",
     token,
     "execute-custom-node-command",
-    "export_pathfinding_scores",
+    "list_channel_monitor_sizes",
   ]);
   expect(result.status).toBe(0);
-  // command output is backend-defined; just assert we got valid JSON back
-  expect(() => JSON.parse(result.stdout)).not.toThrow();
+  // command output is backend-defined; list_channel_monitor_sizes returns an
+  // array of per-channel monitor sizes (empty on a channel-less node)
+  expect(Array.isArray(JSON.parse(result.stdout))).toBe(true);
 });
