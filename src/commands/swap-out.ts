@@ -22,7 +22,7 @@ export function registerSwapOutCommand(program: Command): void {
         const client = getClient(program);
         const initiated = await client.post<SwapResponse>("/api/swaps/out", {
           swapAmountSat: opts.amount,
-          destination: opts.destination ?? "",
+          ...(opts.destination ? { destination: opts.destination } : {}),
         });
         // The initiate response only contains the swap ID, so look up the full
         // swap to return the lightning send amount, on-chain receive amount and
