@@ -21,9 +21,8 @@ export function registerSwapInCommand(program: Command): void {
         });
         // The initiate response only contains the swap ID, so look up the full
         // swap to return the on-chain lockup address and `sendAmountSat` (the
-        // exact on-chain amount to deposit, including fees). Fund that address
-        // from an external wallet, or from the hub's on-chain wallet with
-        // `pay-onchain --address <lockupAddress> --amount <sendAmountSat>`.
+        // exact on-chain amount to deposit, including fees). The deposit must
+        // then be sent to that address from any on-chain wallet.
         const swap = await client.get<Swap>(`/api/swaps/${initiated.swapId}`);
         output(swap);
       });

@@ -4,11 +4,10 @@ import { getClient, handleError, output } from "../utils.js";
 
 export function registerPayOnchainCommand(program: Command): void {
   program
-    .command("pay-onchain")
+    .command("pay-onchain <address>")
     .description(
       "Send an on-chain bitcoin payment from the hub's on-chain wallet to any address",
     )
-    .requiredOption("--address <address>", "On-chain address to send to")
     .option(
       "--amount <sats>",
       "Amount to send, in satoshis (required unless --all)",
@@ -25,12 +24,14 @@ export function registerPayOnchainCommand(program: Command): void {
       parseInt,
     )
     .action(
-      async (opts: {
-        address: string;
-        amount?: number;
-        all: boolean;
-        feeRate?: number;
-      }) => {
+      async (
+        address: string,
+        opts: {
+          amount?: number;
+          all: boolean;
+          feeRate?: number;
+        },
+      ) => {
         await handleError(async () => {
           if (!opts.all && opts.amount === undefined) {
             throw new Error("specify --amount <sats> or --all");
@@ -42,14 +43,14 @@ export function registerPayOnchainCommand(program: Command): void {
           const result = await client.post<RedeemOnchainFundsResponse>(
             "/api/wallet/redeem-onchain-funds",
             {
-              toAddress: opts.address,
+              toAddress: address,
               amountSat: opts.amount,
               feeRate: opts.feeRate,
               sendAll: opts.all,
             },
           );
           output({
-            toAddress: opts.address,
+            toAddress: address,
             amountSat: opts.amount,
             sendAll: opts.all,
             txId: result.txId,

@@ -273,9 +273,6 @@ npx @getalby/hub-cli lookup-transaction <paymentHash>
 # Returns the on-chain lockup address and the exact amount to deposit.
 npx @getalby/hub-cli swap-in --amount 100000
 
-# Fund a pending swap-in from the hub's on-chain wallet (pay the lockup address)
-npx @getalby/hub-cli pay-onchain --address <lockupAddress> --amount <sendAmountSat>
-
 # Swap lightning out into the hub's own on-chain wallet (amount received on-chain, in sats)
 npx @getalby/hub-cli swap-out --amount 100000
 
@@ -293,10 +290,10 @@ npx @getalby/hub-cli lookup-swap <swapId>
 npx @getalby/hub-cli get-onchain-address
 
 # Send an on-chain payment from the hub's on-chain wallet to any address
-npx @getalby/hub-cli pay-onchain --address bc1... --amount 100000
+npx @getalby/hub-cli pay-onchain bc1... --amount 100000
 
 # Sweep the entire on-chain balance to an address
-npx @getalby/hub-cli pay-onchain --address bc1... --all
+npx @getalby/hub-cli pay-onchain bc1... --all
 ```
 
 ### NWC Apps
