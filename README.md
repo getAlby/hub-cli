@@ -317,14 +317,14 @@ npx @getalby/hub-cli create-app --name "My App" \
   --max-amount 10000 \
   --budget-renewal monthly
 
-# Isolated sub-wallet app
+# Isolated app with its own balance (for a full sub-wallet use create-sub-wallet)
 npx @getalby/hub-cli create-app --name "Isolated App" --isolated --unlock-password YOUR_PASSWORD
 ```
 
 ### Sub-wallets
 
 ```bash
-# Create a sub-wallet (isolated app with its own balance)
+# Create a sub-wallet with its own balance
 npx @getalby/hub-cli create-sub-wallet --name "Alice"
 
 # List only sub-wallets

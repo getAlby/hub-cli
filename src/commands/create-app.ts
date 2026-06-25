@@ -28,7 +28,7 @@ export function registerCreateAppCommand(program: Command): void {
       "monthly",
     )
     .option("--expires-at <iso8601>", "Token expiry date (ISO 8601)")
-    .option("--isolated", "Create isolated sub-wallet app", false)
+    .option("--isolated", "Create an isolated app with its own balance (for a full sub-wallet use create-sub-wallet)", false)
     .option(
       "--unlock-password <string>",
       "Unlock password (required for isolated apps)",
