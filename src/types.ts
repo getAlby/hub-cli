@@ -210,6 +210,19 @@ export interface CreateAppRequest {
   unlockPassword?: string;
 }
 
+export interface TransferRequest {
+  amountSat?: number;
+  amountMsat?: number;
+  fromAppId?: number;
+  toAppId?: number;
+  description?: string;
+}
+
+export interface CreateLightningAddressRequest {
+  address: string;
+  appId: number;
+}
+
 export interface CreateAppResponse {
   pairingUri: string;
   pairingSecretKey: string;
