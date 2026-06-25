@@ -10,12 +10,16 @@ export function registerListAppsCommand(program: Command): void {
       "--name <name>",
       "Filter apps by name (prefix match). Use this to look up a single app's balance.",
     )
-    .action(async (opts: { name?: string }) => {
+    .option("--sub-wallets", "Only list sub-wallets")
+    .action(async (opts: { name?: string; subWallets?: boolean }) => {
       await handleError(async () => {
         const client = getClient(program);
         const params = new URLSearchParams();
-        if (opts.name) {
-          params.set("filters", JSON.stringify({ name: opts.name }));
+        const filters: Record<string, unknown> = {};
+        if (opts.name) filters.name = opts.name;
+        if (opts.subWallets) filters.subWallets = true;
+        if (Object.keys(filters).length > 0) {
+          params.set("filters", JSON.stringify(filters));
         }
         const query = params.toString();
         const result = await client.get<ListAppsResponse>(

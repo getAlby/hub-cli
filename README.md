@@ -243,8 +243,11 @@ npx @getalby/hub-cli execute-custom-node-command "pay_bolt12_offer --offer lno..
 # Pay a BOLT11 invoice
 npx @getalby/hub-cli pay-invoice lnbc...
 
-# Pay a zero-amount invoice, specifying the amount
+# Pay a zero-amount invoice, specifying the amount in satoshis
 npx @getalby/hub-cli pay-invoice lnbc... --amount 1000
+
+# Pay from a specific sub-wallet/app instead of the main hub wallet
+npx @getalby/hub-cli pay-invoice lnbc... --from-app-id 3
 
 # Create an invoice
 npx @getalby/hub-cli make-invoice --amount 1000 --description "test"
@@ -314,11 +317,33 @@ npx @getalby/hub-cli create-app --name "My App" \
   --max-amount 10000 \
   --budget-renewal monthly
 
-# Isolated sub-wallet app
+# Isolated app with its own balance (for a full sub-wallet use create-sub-wallet)
 npx @getalby/hub-cli create-app --name "Isolated App" --isolated --unlock-password YOUR_PASSWORD
+```
 
-# Create a sub-wallet (isolated app with its own balance)
+### Sub-wallets
+
+```bash
+# Create a sub-wallet with its own balance
 npx @getalby/hub-cli create-sub-wallet --name "Alice"
+
+# List only sub-wallets
+npx @getalby/hub-cli list-apps --sub-wallets
+
+# Fund a sub-wallet from the main hub wallet
+npx @getalby/hub-cli transfer --to-app-id 3 --amount 10000
+
+# Withdraw from a sub-wallet back to the main hub wallet
+npx @getalby/hub-cli transfer --from-app-id 3 --amount 5000
+
+# Move funds directly between two sub-wallets
+npx @getalby/hub-cli transfer --from-app-id 3 --to-app-id 4 --amount 2000
+
+# Assign a lightning address to a sub-wallet (requires a connected Alby account)
+npx @getalby/hub-cli create-sub-wallet-lightning-address --app-id 3 --address alice
+
+# Remove a sub-wallet's lightning address
+npx @getalby/hub-cli delete-sub-wallet-lightning-address --app-id 3
 ```
 
 ## Output

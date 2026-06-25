@@ -19,9 +19,7 @@ const SUBWALLET_SCOPES = [
 export function registerCreateSubWalletCommand(program: Command): void {
   program
     .command("create-sub-wallet")
-    .description(
-      "Create a new sub-wallet (isolated app with its own balance)",
-    )
+    .description("Create a new sub-wallet with its own balance")
     .requiredOption("--name <string>", "Sub-wallet name")
     .option(
       "--scopes <list>",
