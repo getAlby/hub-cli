@@ -36,6 +36,10 @@ import { registerExecuteCustomNodeCommandCommand } from "./commands/execute-cust
 import { registerGetAlbyAccountCommand } from "./commands/get-alby-account.js";
 import { registerGetAlbyStatusCommand } from "./commands/get-alby-status.js";
 import { registerLinkAlbyAccountCommand } from "./commands/link-alby-account.js";
+import { registerSwapOutCommand } from "./commands/swap-out.js";
+import { registerSwapInCommand } from "./commands/swap-in.js";
+import { registerLookupSwapCommand } from "./commands/lookup-swap.js";
+import { registerPayOnchainCommand } from "./commands/pay-onchain.js";
 
 const program = new Command();
 
@@ -85,5 +89,9 @@ registerExecuteCustomNodeCommandCommand(program);
 registerGetAlbyAccountCommand(program);
 registerGetAlbyStatusCommand(program);
 registerLinkAlbyAccountCommand(program);
+registerSwapOutCommand(program);
+registerSwapInCommand(program);
+registerLookupSwapCommand(program);
+registerPayOnchainCommand(program);
 
 program.parse();

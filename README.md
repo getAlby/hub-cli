@@ -136,14 +136,11 @@ npx @getalby/hub-cli get-node-status
 npx @getalby/hub-cli get-health
 ```
 
-### Balances & Wallet
+### Balances
 
 ```bash
 # Lightning + on-chain balances
 npx @getalby/hub-cli get-balances
-
-# Get an on-chain deposit address
-npx @getalby/hub-cli get-onchain-address
 ```
 
 ### Channels & Peers
@@ -269,6 +266,39 @@ npx @getalby/hub-cli list-transactions --limit 50 --offset 0
 npx @getalby/hub-cli lookup-transaction <paymentHash>
 ```
 
+### Swaps
+
+```bash
+# Swap on-chain bitcoin in to lightning (amount received on lightning, in sats).
+# Returns the on-chain lockup address and the exact amount to deposit.
+npx @getalby/hub-cli swap-in --amount 100000
+
+# Fund a pending swap-in from the hub's on-chain wallet (pay the lockup address)
+npx @getalby/hub-cli pay-onchain --address <lockupAddress> --amount <sendAmountSat>
+
+# Swap lightning out into the hub's own on-chain wallet (amount received on-chain, in sats)
+npx @getalby/hub-cli swap-out --amount 100000
+
+# Swap lightning out to an external on-chain address
+npx @getalby/hub-cli swap-out --amount 100000 --destination bc1...
+
+# Look up a swap by its swap ID
+npx @getalby/hub-cli lookup-swap <swapId>
+```
+
+### On-chain
+
+```bash
+# Get an on-chain deposit address
+npx @getalby/hub-cli get-onchain-address
+
+# Send an on-chain payment from the hub's on-chain wallet to any address
+npx @getalby/hub-cli pay-onchain --address bc1... --amount 100000
+
+# Sweep the entire on-chain balance to an address
+npx @getalby/hub-cli pay-onchain --address bc1... --all
+```
+
 ### NWC Apps
 
 ```bash
@@ -293,85 +323,6 @@ npx @getalby/hub-cli create-app --name "Isolated App" --isolated --unlock-passwo
 # Create a sub-wallet (isolated app with its own balance)
 npx @getalby/hub-cli create-sub-wallet --name "Alice"
 ```
-
-## Command Reference
-
-### Setup & Auth
-
-| Command  | Description                                                | Required Options |
-| -------- | ---------------------------------------------------------- | ---------------- |
-| `setup`  | Initialize hub for the first time (one-time)               | `--password`     |
-| `start`  | Start the node after setup or restart; returns a JWT token | `--password`     |
-| `unlock` | Get a JWT token for an already-running hub (no restart)    | `--password`     |
-
-### Info & Status
-
-| Command           | Description                       | Required Options |
-| ----------------- | --------------------------------- | ---------------- |
-| `get-info`        | Hub status, version, backend type | —                |
-| `get-node-status` | Lightning node readiness          | —                |
-| `get-health`      | Health check and active alarms    | —                |
-
-### Balances & Wallet
-
-| Command               | Description                   | Required Options |
-| --------------------- | ----------------------------- | ---------------- |
-| `get-balances`        | Lightning + on-chain balances | —                |
-| `get-onchain-address` | On-chain deposit address      | —                |
-
-### Channels & Peers
-
-| Command                          | Description                                      | Required Options                             |
-| -------------------------------- | ------------------------------------------------ | -------------------------------------------- |
-| `list-channels`                  | List Lightning channels                          | —                                            |
-| `get-channel-suggestions`        | List LSP providers with fees                     | —                                            |
-| `request-alby-lsp-channel-offer` | Request Alby LSP offer                           | —                                            |
-| `get-node-connection-info`       | Get node pubkey, address, port                   | —                                            |
-| `list-peers`                     | List connected peers                             | —                                            |
-| `connect-peer`                   | Connect to a Lightning peer                      | `--pubkey`, `--address`, `--port`            |
-| `open-channel`                   | Open an outbound channel to a peer               | `--pubkey`, `--amount-sats`                  |
-| `close-channel`                  | Close a lightning channel (cooperative or force) | `--peer-id`, `--channel-id`                  |
-| `request-lsp-order`              | Request LSP channel invoice                      | `--amount`, `--lsp-type`, `--lsp-identifier` |
-
-### Node Management
-
-| Command                | Description                                                         | Required Options                                                     |
-| ---------------------- | ------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| `stop`                 | Stop the Lightning node (HTTP server keeps running)                 | —                                                                    |
-| `sync`                 | Trigger a wallet sync                                               | —                                                                    |
-| `backup`               | Export wallet recovery phrase to a file                             | `--password`                                                         |
-| `change-password`      | Change the hub unlock password                                      | `--current-password`, `--confirm-current-password`, `--new-password` |
-| `connect-alby-account` | Connect your Alby account (returns auth URL or confirms connection) | `--code` (optional, step 2)                                          |
-
-### Custom Node Commands
-
-| Command                       | Description                                              | Required Options       |
-| ----------------------------- | -------------------------------------------------------- | ---------------------- |
-| `list-custom-node-commands`   | List custom node (debug) commands for the active backend | —                      |
-| `execute-custom-node-command` | Execute a custom node (debug) command                    | `<command>` (argument) |
-
-### Payments
-
-| Command        | Description             | Required Options       |
-| -------------- | ----------------------- | ---------------------- |
-| `pay-invoice`  | Pay a BOLT11 invoice    | `<invoice>` (argument) |
-| `make-invoice` | Create a BOLT11 invoice | `--amount`             |
-| `make-offer`   | Create a BOLT-12 offer  | —                      |
-
-### Transactions
-
-| Command              | Description               | Required Options           |
-| -------------------- | ------------------------- | -------------------------- |
-| `list-transactions`  | List payment history      | —                          |
-| `lookup-transaction` | Look up a payment by hash | `<paymentHash>` (argument) |
-
-### NWC Apps
-
-| Command             | Description                                     | Required Options |
-| ------------------- | ----------------------------------------------- | ---------------- |
-| `list-apps`         | List NWC app connections (filter with `--name`) | —                |
-| `create-app`        | Create a new NWC connection                     | `--name`         |
-| `create-sub-wallet` | Create a sub-wallet (isolated app with balance) | `--name`         |
 
 ## Output
 

@@ -262,3 +262,40 @@ export interface CustomNodeCommandDef {
 export interface CustomNodeCommandsResponse {
   commands: CustomNodeCommandDef[];
 }
+
+export interface SwapResponse {
+  swapId: string;
+  paymentHash: string;
+}
+
+export interface RedeemOnchainFundsResponse {
+  txId: string;
+}
+
+/** "in" = on-chain -> lightning, "out" = lightning -> on-chain. */
+export type SwapType = "in" | "out";
+
+export type SwapState = "PENDING" | "SUCCESS" | "FAILED" | "REFUNDED";
+
+export interface Swap {
+  id: string;
+  type: SwapType;
+  state: SwapState;
+  invoice: string;
+  /** Amount sent in satoshis. For swap out, the lightning amount spent. */
+  sendAmountSat: number;
+  /** Amount received in satoshis. For swap out, the on-chain amount received. */
+  receiveAmountSat: number;
+  paymentHash: string;
+  /** On-chain address the swapped-out funds are sent to. */
+  destinationAddress: string;
+  refundAddress: string;
+  lockupAddress: string;
+  lockupTxId: string;
+  claimTxId: string;
+  autoSwap: boolean;
+  boltzPubkey: string;
+  createdAt: string;
+  updatedAt: string;
+  usedXpub: boolean;
+}
