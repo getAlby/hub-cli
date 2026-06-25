@@ -6,22 +6,22 @@ export function registerPayOnchainCommand(program: Command): void {
   program
     .command("pay-onchain <address>")
     .description(
-      "Send an on-chain bitcoin payment from the hub's on-chain wallet to any address",
+      "Send an on-chain bitcoin payment from the hub's on-chain wallet to any address.",
     )
     .option(
       "--amount <sats>",
       "Amount to send, in satoshis (required unless --all)",
       parseInt,
     )
-    .option(
-      "--all",
-      "Send the entire on-chain balance (sweep the wallet)",
-      false,
-    )
+    .option("--all", "Send the entire on-chain balance", false)
     .option(
       "--fee-rate <satvb>",
       "Fee rate in sats/vByte (default: hub chooses)",
       parseInt,
+    )
+    .addHelpText(
+      "after",
+      "\nNote: if you have channels open you should avoid spending your entire balance as you will drain anchor reserves. Keep ~20,000 sats reserved per channel.",
     )
     .action(
       async (
